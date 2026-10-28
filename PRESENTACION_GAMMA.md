@@ -1,162 +1,121 @@
-# PRESENTACIÓN EJECUTIVA: SISTEMA INTELIGENTE DE CÁLCULO Y VALIDACIÓN DE TMO CON N8N, SUPABASE E INTELIGENCIA ARTIFICIAL
+# PRESENTACIÓN EJECUTIVA: TMO CONTROL ENTERPRISE SUITE (BPO & ASISTENTE IA)
 
-> **Instrucciones para Gamma.app:**
-> 1. Ingresa a [https://gamma.app](https://gamma.app) e inicia sesión.
+> **Instrucciones para Gamma.app / Canva / PowerPoint:**
+> 1. Ingresa a [https://gamma.app](https://gamma.app) e inicia sesión (o en tu software de presentaciones favorito).
 > 2. Haz clic en **"Crear nuevo con IA"** (Create new) > **"Pegar texto"** (Paste in text).
 > 3. Pega todo el contenido de este documento.
-> 4. Selecciona el formato **"Presentación" (16:9)** y el estilo visual preferido (recomendado: *Tech / Emerald / Midnight*).
+> 4. Selecciona el formato **"Presentación" (16:9)** y el estilo visual preferido (recomendado: *Tech / Midnight / Emerald*).
 > 5. Haz clic en **"Generar"** para obtener las diapositivas interactivas listas para exponer.
+> *Nota: También puedes ver la versión interactiva nativa ejecutando el servidor local en [http://localhost:3333/slides.html](http://localhost:3333/slides.html).*
 
 ---
 
 # Diapositiva 1: Portada
-## Sistema Inteligente de Cálculo, Looping y Validación de TMO con n8n, Supabase e IA
-### Automatización Integral de Métricas Operativas BPO para Centros de Contacto
+## TMO Control Enterprise Suite
+### Automatización Integral de Métricas Operativas BPO, Arquitectura SPA y Copilot IA
 
-* **Autor / Expositor:** Equipo de Automatización & Operaciones BPO
-* **Tecnologías:** n8n Workflow Automation • PostgreSQL / Supabase • OpenAI GPT-4o • Node.js • Nodemailer
+* **Autor / Expositor:** Andrés Morales • Equipo de Operaciones & Automatización BPO
+* **Tecnologías:** n8n Workflow Engine • PostgreSQL (Supabase) • OpenAI GPT-4o / Claude • Node.js • Tailwind CSS • Nodemailer
+* **Repositorio Oficial:** [github.com/andres549/Proyecto_tmo](https://github.com/andres549/Proyecto_tmo)
 * **Objetivo:** Eliminar el cálculo manual de TMO en hojas de cálculo y automatizar la ingesta, deduplicación, consolidación visual en Excel de 4 hojas, auditoría con IA y despacho automático multicanal.
 
 ---
 
 # Diapositiva 2: La Problemática Operativa Actual
-## Los Desafíos del Proceso Manual en Contact Centers
+## Los Desafíos del Proceso Manual en Centros de Contacto
 
-* **Dependencia Manual Crítica:** Un analista de operaciones debe esperar correos con archivos Excel dispersos, abrir cada archivo y calcular el TMO manualmente con fórmulas propensas a error humano.
-* **Procesamiento Lento e Ineficiente:** El tiempo de consolidación toma entre 45 y 90 minutos por turno, impidiendo la toma de decisiones ágiles sobre asesores que superan los tiempos objetivo.
-* **Archivos Duplicados y Métricas Sesgadas:** Sin un control criptográfico de duplicados, los mismos archivos se procesan varias veces, alterando las métricas de rendimiento y comisiones.
-* **Falta de Auditoría Cualitativa:** Las fórmulas estándar solo devuelven números fríos, sin planes de acción ni diagnósticos de coaching para los supervisores en piso.
+* **Pérdida Crítica de Tiempo:** Un analista de operaciones dedica entre 45 y 90 minutos por turno a consolidar archivos Excel dispersos enviados por correo.
+* **Vulnerabilidad a Errores y Duplicidad:** La manipulación manual de fórmulas altera métricas y, sin control criptográfico de duplicados, los mismos archivos se procesan varias veces afectando bonificaciones.
+* **Fórmulas Frías sin Diagnóstico:** Las hojas de cálculo tradicionales devuelven números sin explicar el porqué del desvío ni ofrecer planes de coaching al supervisor.
+* **Notificaciones Tardías:** Los asesores que superan la meta se enteran días después en auditorías semanales, cuando el daño en el SLA contractual ya es irreversible.
 
 ---
 
-# Diapositiva 3: Objetivo del Proyecto
+# Diapositiva 3: Objetivo del Proyecto & Solución Integral
 ## Transformación Digital del Ciclo de Vida del TMO
 
-* **Automatización Extremo a Extremo:** Automatizar el 100% de la recepción, validación, cálculo y notificación sin requerir intervención humana para abrir hojas de cálculo.
-* **Consolidación Profesional y Gráfica:** Generar automáticamente un libro Excel reglamentario de 4 hojas (*Resumen TMO, Datos originales, Dashboard con Gráficos de Barras y Donas, y Validación*).
-* **Validación Independiente y Paralela:** Desacoplar el cálculo numérico de la auditoría cualitativa mediante dos flujos independientes en n8n conectados por eventos de correo e IMAP.
-* **Asistente de IA Táctico:** Analizar anomalías y generar planes de coaching individualizados para los supervisores operativos sin alucinar clasificaciones matemáticas.
+* **Automatización del 100%:** Ingesta automática mediante correos IMAP o portal web SPA, deduplicación SHA-256 y cálculo en menos de 3.2 segundos.
+* **Consolidación Profesional y Gráfica:** Generación automática de libros Excel oficiales de 4 hojas (*Resumen Consolidado, Datos Originales, Dashboard con Gráficos de Barras y Donas, y Hoja de Validación IA*).
+* **Validación Independiente y Desacoplada:** Dos flujos paralelos en n8n conectados por eventos de correo para separar el cálculo matemático de la auditoría cualitativa.
+* **Copilot de IA y Alertas Inmediatas:** Detección de asesores en riesgo ($TMO > 20\text{s}$) y despacho automático de planes de coaching individualizados por correo.
 
 ---
 
 # Diapositiva 4: Arquitectura Tecnológica Integrada
-## Ecosistema Robusto, Escalable y Modular
+## Ecosistema Robusto, Escalable y Desacoplado
 
 | Componente | Rol en la Solución | Tecnología Empleada |
 | :--- | :--- | :--- |
-| **Plataforma Web** | Cronómetro en vivo (Talk/Hold/Wrap-up), carga de archivos masivos, KPIs en tiempo real y selector de envío. | HTML5, Tailwind CSS, Chart.js, SheetJS |
-| **Motor de Automatización** | Orquestación por eventos, deduplicación SHA-256, Looping over items, ejecución de lógica y branching condicional. | n8n Engine v2.41+ |
-| **Capa de Persistencia** | Almacenamiento relacional de configuraciones dinámicas, auditoría de ejecuciones, registros crudos y logs de correo. | Supabase (PostgreSQL 15 con RLS) |
-| **Generador de Reportes** | Construcción programática de libros Excel oficiales con formateo condicional y gráficos nativos. | Node.js con ExcelJS & Chart-to-Image |
-| **Inteligencia Artificial** | Auditoría operativa, detección de desviaciones y generación de recomendaciones tácticas. | OpenAI GPT-4o-mini / LangChain Node |
-| **Motor de Correo** | Despacho SMTP autenticado con adjuntos pesados y disparadores IMAP automáticos. | Nodemailer / Google Workspace SMTP |
+| **Portal Web SPA** | Cockpit en vivo (Talk/Hold/Wrap-up), 6 vistas aisladas, modo oscuro/claro y ecualizador sonoro. | HTML5, Tailwind CSS, Chart.js, Web Audio API |
+| **Motor de Automatización** | Orquestación por eventos, deduplicación SHA-256, loops condicionales y branching de alertas. | n8n Engine v2.41+ |
+| **Capa de Persistencia** | Almacenamiento relacional de configuraciones dinámicas, auditoría de ejecuciones y trazabilidad. | Supabase (PostgreSQL 15 con RLS) |
+| **Generador de Reportes** | Construcción programática de libros Excel oficiales con formato corporativo y gráficos nativos. | Node.js con ExcelJS & Chart-to-Image |
+| **Copilot de IA (NLU)** | Comprensión de lenguaje natural en español, diagnóstico de cuellos de botella y planes de mejora. | OpenAI GPT-4o-mini / LangChain |
+| **Motor de Alertas** | Despacho SMTP autenticado con adjuntos de libros Excel a bandejas personales y corporativas. | Nodemailer / Google Workspace SMTP |
 
 ---
 
-# Diapositiva 5: Los Dos Flujos Independientes en n8n
-## Arquitectura Desacoplada y Concurrente
+# Diapositiva 5: Portal Web SPA & Cockpit de Medición en Vivo
+## Experiencia de Usuario de Clase Mundial (UI/UX 2.0)
 
-### Flujo 1: Cálculo, Consolidación y Envío del Reporte
-1. **Trigger Webhook / Carga:** Recibe el dataset crudo o archivo Excel desde la web.
-2. **Control de Duplicados (Hash SHA-256):** Verifica contra Supabase si el contenido ya fue procesado previamente para evitar duplicidad de métricas.
-3. **Loop Over Items & Cálculo:** Itera los registros válidos ($\ge 50$ filas), suma los tiempos y calcula el TMO promedio por agente.
-4. **Construcción del Excel Consolidado:** Genera las 4 hojas con gráficos de barras (límite horizontal) y donas (% aprobados).
-5. **Persistencia & Despacho SMTP:** Guarda la ejecución en `tmo_runs` y envía el correo con el Excel consolidado adjunto.
-
-### Flujo 2: Validación Independiente y Asistente de IA
-1. **Email Trigger (IMAP):** Detecta automáticamente la llegada del correo con el asunto `[REPORTE TMO CONSOLIDADO]`.
-2. **Consulta de Reglas de Negocio:** Lee el umbral dinámico desde `app_settings` en Supabase (ej: 20.0s).
-3. **Clasificación Estricta:** Clasifica en `APROBADO` ($\le 20\text{s}$), `REQUIERE REVISIÓN` ($> 20\text{s}$) o `ERROR DE DATOS`.
-4. **Agente de IA (OpenAI):** Examina los casos atípicos y formula planes de coaching tácticos para el supervisor.
-5. **Enrutamiento Condicional de Alertas:** Envía correos diferenciados según los resultados encontrados.
+* **6 Vistas Únicas e Independientes:** Dashboard General, Cronómetro en Vivo, Operadores & Células, Auditoría IA, Historial y Alertas & n8n. Cero solapamiento de scroll entre secciones.
+* **Temporizador Cockpit con Ecualizador:** Medición precisa en tiempo real con barras de audio reactivas y síntesis sonora nativa con Web Audio API.
+* **Fases Reglamentarias BPO:** Control exacto de *Talk Time* (conversación), *Hold Time* (espera) y *Wrap-up* (tipificación y cierre en CRM).
+* **Diseño Moderno:** Tema Oscuro profundo y Modo Claro, tarjetas KPI con barras de progreso y notificaciones Toast flotantes no intrusivas.
 
 ---
 
-# Diapositiva 6: Funcionamiento Paso a Paso
-## Recorrido del Dato desde la Llamada hasta la Acción Operativa
+# Diapositiva 6: Copilot de IA con Comprensión de Lenguaje Natural (NLU)
+## Asistente Táctico Conversacional para el Supervisor
 
-```
-[Llamada / Archivo Excel] 
-          ↓
-[Deduplicación SHA-256] → (Si ya existe: Omite y alerta)
-          ↓
-[Looping & Agrupación por Agente]
-          ↓
-[Cálculo de TMO Promedio y % del Límite]
-          ↓
-[Generación de Excel 4 Hojas con Gráficas]
-          ↓
-[Envío Correo Consolidado a Supervisor]
-          ↓
-[Disparo de Flujo 2 por IMAP]
-          ↓
-[Evaluación de Reglas + Auditoría Asistente IA]
-          ↓
-[Despacho de Alertas Verde / Roja y Registro en Supabase]
-```
-
-* **Fórmula Oficial de Desempeño:**
-  $$\text{TMO Promedio} = \frac{\sum \text{Tiempos Válidos}}{\text{Total Gestiones Válidas}}$$
-  $$\text{Porcentaje del Límite} = \left(\frac{\text{TMO Promedio}}{\text{Límite Objetivo}}\right) \times 100$$
+* **Lenguaje Cotidiano en Español:** El supervisor interactúa fluidamente sin comandos rígidos:
+  * *"¿Cómo le fue a Andrés hoy?"*
+  * *"¿Quiénes tuvieron bajo desempeño?"*
+  * *"¿Qué canal presenta más demoras?"*
+  * *"Plan de coaching para la próxima semana"*
+* **Cálculos Matemáticos en Tiempo Real:** La IA analiza las métricas en memoria para ofrecer respuestas estadísticamente exactas sin alucinaciones.
+* **Acciones Directas en el Chat:** Respuestas enriquecidas con botones integrados para despachar alertas y planes de mejora con un clic.
+* **Guardrails Operativos:** Reglas que mantienen a la IA estrictamente enfocada en el desempeño del centro de contacto.
 
 ---
 
-# Diapositiva 7: El Dashboard y los Reportes Visuales
-## Excel Consolidado Oficial de 4 Hojas
+# Diapositiva 7: Módulo de Alertas Individuales a Trabajadores
+## Notificaciones Proactivas y Cierre de Brechas
 
-1. **Hoja 1: Resumen TMO**
-   * Tabla consolidada por agente: total de gestiones, suma en segundos, TMO promedio, % frente al límite y clasificación operativa.
-2. **Hoja 2: Datos Originales**
-   * Trazabilidad completa fila por fila de los registros procesados con su estado de validación individual.
-3. **Hoja 3: Dashboard Visual**
-   * **Gráfico 1 (Barras):** TMO por agente con barras verdes ($\le 20\text{s}$), rojas ($> 20\text{s}$) y línea de umbral en 20s.
-   * **Gráfico 2 (Dona):** Distribución porcentual entre agentes aprobados y agentes en revisión.
-4. **Hoja 4: Validación y Auditoría**
-   * Parámetros aplicados, fecha de corte, bitácora de ejecución y diagnóstico táctico del Asistente IA.
+* **Detección Automática de Desvíos:** Identificación inmediata de operadores que superan el umbral objetivo de 20.00 segundos.
+* **Caso de Éxito Validado: Andrés Morales (`andrxscxx@gmail.com`):**
+  * TMO Registrado: 25.45s (+27.3% sobre la meta).
+  * Desglose: Talk: 17.2s | Hold: 5.1s | Wrap: 3.15s.
+  * Plan Táctico: Escalamiento temprano a 2do nivel antes de 15s y uso de plantillas rápidas en CRM.
+* **Adjunto Oficial:** Cada alerta despachada incluye el archivo Excel consolidado de la jornada para máxima transparencia.
 
 ---
 
-# Diapositiva 8: Valor y Beneficios de la Automatización
-## Impacto Medible en la Operación BPO
+# Diapositiva 8: Resultados de la Auditoría Operativa
+## Hallazgos de la Medición en la Muestra de Prueba (85 Gestiones)
 
-* **Reducción del 95% en Tiempo de Procesamiento:** De 60 minutos de manipulación manual en Excel a menos de 4 segundos por ejecución automática.
-* **100% de Confiabilidad y Cero Errores:** Erradicación total de fórmulas rotas, celdas mal copiadas o registros duplicados gracias al hash SHA-256.
-* **Visibilidad en Tiempo Real:** Supervisores y coordinadores reciben el reporte en su correo antes de que termine el turno operativo.
-* **Coaching Enfocado y Oportuno:** La IA señala de inmediato en qué fase (Talk, Hold o Wrap-up) se están desviando los agentes fuera de meta.
-
----
-
-# Diapositiva 9: Demostración y Datos de Prueba Reales
-## Ejecución Exitosa con Dataset de Producción
-
-* **Dataset de Entrada:** 85 gestiones reales de contact center con 8 agentes evaluados en 4 canales de atención.
-* **Límite Configurado:** 20.0 segundos.
-* **Resultados Obtenidos:**
-  * **TMO Global Promedio:** 19.55 segundos (En meta).
-  * **Tasa de Aprobación:** 62.5% (5 asesores aprobados / 3 en revisión).
-  * **Agentes Aprobados:** Carlos Mendoza (15.55s), Laura Restrepo (17.36s), Daniela Salazar (17.55s), Camila Torres (18.67s), Andrés Morales (19.82s).
-  * **Agentes Requieren Revisión:** Mateo Cárdenas (21.18s), Valentina Gómez (21.75s), Felipe Herrera (23.82s).
-* **Diagnóstico de IA Emitido:** Priorizar coaching en tiempos de Wrap-up y retención en línea para el canal de soporte técnico.
+* **TMO Global del Equipo:** **19.55 segundos** (Cumpliendo el objetivo general de $\le 20\text{s}$).
+* **Tasa de Aprobación Global:** **62.5%** (5 de 8 asesores evaluados se encuentran dentro de meta).
+* **Operador Más Destacado:** Laura Restrepo con un TMO promedio de **12.64s** (uso óptimo de tipificación en paralelo).
+* **Operadores en Revisión:** Felipe Herrera (30.00s), Andrés Morales (25.45s) y Mateo Cárdenas (24.50s) — Todos pertenecientes a la Célula F3 (Soporte Técnico).
+* **Canal Más Rápido:** Chat en Vivo (**16.2s**) | **Canal Crítico:** Soporte Técnico (**26.5s**).
 
 ---
 
-# Diapositiva 10: Evidencias de Conectividad y Despacho
-## Integración Validada al 100% en Entorno Real
+# Diapositiva 9: Impacto en el Negocio & Retorno de Inversión (ROI)
 
-* **Autenticación SMTP Google Workspace:** Conexión verificada en puerto 465 SSL/TLS con cuenta corporativa.
-* **Correos Despachados y Verificados:**
-  1. *Notificación de Enlace SMTP:* Mensaje de prueba recibido con ID de confirmación.
-  2. *Reporte Consolidado:* Envío exitoso con el libro `reporte_consolidado_tmo.xlsx` adjunto.
-  3. *Alerta de Auditoría IA:* Envío de alertas con tabla comparativa y `reporte_auditoria_validacion_ia.xlsx` adjunto.
-* **Persistencia Relacional:** Tablas `app_settings`, `tmo_runs` y `email_logs` sincronizadas en PostgreSQL.
+* **-96% en Tiempo Operativo:** Reducción drástica del tiempo de consolidación de 45-90 minutos manuales a solo 3.2 segundos automatizados.
+* **100% de Integridad de Datos:** Eliminación total de duplicados mediante hashes SHA-256 en Supabase y fórmulas matemáticas estandarizadas.
+* **Acción Inmediata 24/7:** Intervención proactiva en el mismo turno antes de que se generen penalizaciones contractuales en los acuerdos de nivel de servicio (SLA).
+* **Escalabilidad Empresarial:** Soporta múltiples células de trabajo, campañas y clientes simultáneos con umbrales configurables en base de datos.
 
 ---
 
-# Diapositiva 11: Conclusiones y Futuras Mejoras
-## Una Plataforma Lista para Producción Continua
+# Diapositiva 10: Conclusiones y Demostración en Vivo
+## Solución Desplegada y Lista para Producción
 
-* **Conclusión Principal:** El sistema cumple a cabalidad con la eliminación de fricción operativa, demostrando cómo n8n, Supabase y modelos de lenguaje resuelven un problema clásico de operaciones BPO.
-* **Siguientes Pasos y Escalabilidad:**
-  * Conexión directa a PBX en la nube (Twilio, Asterisk, Genesys Cloud) mediante webhooks de evento de llamada.
-  * Notificaciones instantáneas vía Slack / Microsoft Teams además de correo electrónico.
-  * Dashboard histórico con predicción de carga operativa y staffing automatizado.
+* **Ecosistema Completo Publicado:** Código fuente, flujos n8n y esquemas SQL disponibles en GitHub:
+  🔗 **[github.com/andres549/Proyecto_tmo](https://github.com/andres549/Proyecto_tmo)**
+* **Portal Web Interactivo en Ejecución:** Accesible localmente en `http://localhost:3333`
+* **Diapositivas Web en Pantalla Completa:** Accesibles en `http://localhost:3333/slides.html`
+* **¡Muchas gracias!** Quedamos atentos a sus preguntas y listos para la demostración en vivo.
