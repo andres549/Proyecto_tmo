@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMO Control Enterprise - Suite de Operaciones BPO & Auditoría IA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome 6.5 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (xlsx) CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Estilos Personalizados del Sistema -->
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            page: '#0B0F19',
+                            card: '#111827',
+                            border: 'rgba(255, 255, 255, 0.08)',
+                            subtle: '#1F2937'
+                        },
+                        brand: {
+                            50: '#EFF6FF',
+                            100: '#DBEAFE',
+                            500: '#3B82F6',
+                            600: '#2563EB',
+                            700: '#1D4ED8',
+                            900: '#1E3A8A'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[var(--bg-page)] text-[var(--text-primary)] flex h-screen overflow-hidden font-sans text-sm selection:bg-blue-500 selection:text-white">
+
+    <!-- CONTENEDOR FLOTANTE PARA TOAST NOTIFICATIONS -->
+    <div id="toastContainer"></div>
+
+    <!-- 1. BARRA LATERAL IZQUIERDA (SIDEBAR DE VISTAS INDEPENDIENTES) -->
+    <aside class="w-64 bg-[var(--bg-surface)] border-r border-[var(--border-color)] flex flex-col flex-shrink-0 z-30 select-none shadow-sm">
+        <!-- Logo y Marca con Glow -->
+        <div class="p-5 border-b border-[var(--border-color)] flex items-center space-x-3.5">
+            <div class="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-black text-sm tracking-widest shadow-md shadow-blue-500/25">
+                <i class="fa-solid fa-headset text-base"></i>
+                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-gray-900"></span>
+            </div>
+            <div>
+                <div class="flex items-center space-x-1.5">
+                    <h1 class="font-bold text-slate-900 dark:text-white text-base leading-tight font-heading">TMO Control</h1>
+                    <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300">PRO</span>
+                </div>
+                <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">BPO Suite & Copilot IA</p>
+            </div>
+        </div>
+
+        <!-- Menú de Navegación Profesional: Cambio de Vistas Únicas -->
+        <nav class="flex-1 px-3.5 py-4 space-y-1.5 overflow-y-auto" id="mainSidebarNav">
+            <button type="button" data-view="dashboard" class="nav-link w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all active text-left">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-chart-pie w-5 text-sm text-slate-400"></i>
+                    <span class="text-xs font-semibold">Dashboard General</span>
+                </div>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            </button>
+
+            <button type="button" data-view="livecall" class="nav-link w-full flex items-center px-3.5 py-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-xl transition-all text-left">
+                <i class="fa-solid fa-stopwatch w-5 text-sm text-slate-400 dark:text-slate-500 mr-2"></i>
+                <span class="text-xs font-medium">Cronómetro en Vivo</span>
+            </button>
+
+            <button type="button" data-view="operators" class="nav-link w-full flex items-center justify-between px-3.5 py-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-xl transition-all text-left">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-user-group w-5 text-sm text-slate-400 dark:text-slate-500"></i>
+                    <span class="text-xs font-medium">Operadores & Células</span>
+                </div>
+                <span class="nav-badge text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-slate-400 font-bold" id="badgeOperadoresCount">9</span>
+            </button>
+
+            <button type="button" data-view="ai" class="nav-link w-full flex items-center justify-between px-3.5 py-2.5 text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-purple-950/30 rounded-xl transition-all text-left">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-brain w-5 text-sm text-purple-500"></i>
+                    <span class="text-xs font-semibold text-purple-700 dark:text-purple-300">Auditoría con IA</span>
+                </div>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300">NLU</span>
+            </button>
+
+            <button type="button" data-view="history" class="nav-link w-full flex items-center justify-between px-3.5 py-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-xl transition-all text-left">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-sm text-slate-400 dark:text-slate-500"></i>
+                    <span class="text-xs font-medium">Historial de Gestiones</span>
+                </div>
+                <span class="nav-badge text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-slate-400 font-semibold" id="badgeHistoryNavCount">85</span>
+            </button>
+
+            <button type="button" data-view="automation" class="nav-link w-full flex items-center justify-between px-3.5 py-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-xl transition-all text-left">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-envelope-open-text w-5 text-sm text-amber-500"></i>
+                    <span class="text-xs font-medium">Alertas & n8n</span>
+                </div>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300">ALERTAS</span>
+            </button>
+        </nav>
+
+        <!-- Estado de Integraciones en el pie del Sidebar -->
+        <div class="p-4 border-t border-[var(--border-color)] bg-[var(--bg-subtle)] space-y-2">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Conexiones Activas</div>
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-600 dark:text-slate-400 flex items-center font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-2 animate-pulse"></span>
+                    n8n Engine
+                </span>
+                <span class="text-[11px] font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/40 px-1.5 py-0.5 rounded">:5678</span>
+            </div>
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-600 dark:text-slate-400 flex items-center font-medium">
+                    <i class="fa-solid fa-envelope-circle-check text-emerald-500 mr-2 text-xs"></i>
+                    SMTP Gmail
+                </span>
+                <span class="text-emerald-600 dark:text-emerald-400 font-bold text-[10px] flex items-center">
+                    <i class="fa-solid fa-check mr-1"></i> Listo
+                </span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 2. CONTENIDO PRINCIPAL (SPA CON VISTAS ÚNICAS) -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+        <!-- Top Header Bar Glassmorphism -->
+        <header class="h-16 bg-[var(--bg-surface)] border-b border-[var(--border-color)] px-6 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md">
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2 text-xs font-medium text-slate-400">
+                    <i class="fa-solid fa-cubes text-blue-500"></i>
+                    <span>TMO Suite</span>
+                    <span class="text-slate-300 dark:text-gray-700">/</span>
+                </div>
+                <h2 class="text-slate-900 dark:text-white font-bold text-base font-heading" id="currentViewTitle">Dashboard General</h2>
+                <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+                    Sistema Activo
+                </span>
+            </div>
+
+            <!-- Controles Superiores -->
+            <div class="flex items-center space-x-3">
+                <!-- Reloj en vivo -->
+                <div class="hidden lg:flex items-center bg-[var(--bg-subtle)] border border-[var(--border-color)] rounded-xl px-3 py-1.5 text-xs text-slate-600 dark:text-slate-300 font-mono shadow-sm">
+                    <i class="fa-regular fa-clock text-blue-500 mr-2"></i>
+                    <span id="liveClockDisplay">--:--:--</span>
+                </div>
+
+                <!-- Rango de fecha -->
+                <div class="flex items-center bg-[var(--bg-subtle)] border border-[var(--border-color)] rounded-xl px-3 py-1.5 text-slate-600 dark:text-slate-300 text-xs shadow-sm font-medium">
+                    <i class="fa-regular fa-calendar-days text-slate-400 mr-2"></i>
+                    <span id="headerDateRange">14 oct 2026</span>
+                </div>
+
+                <!-- Toggle Modo Oscuro / Claro -->
+                <button type="button" id="btnThemeToggle" title="Alternar Modo Oscuro / Claro" class="w-9 h-9 rounded-xl bg-[var(--bg-subtle)] border border-[var(--border-color)] text-slate-600 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-gray-800 flex items-center justify-center transition-all shadow-sm">
+                    <i class="fa-solid fa-moon dark:hidden text-sm"></i>
+                    <i class="fa-solid fa-sun hidden dark:block text-sm"></i>
+                </button>
+
+                <!-- Toggle Efectos de Sonido -->
+                <button type="button" id="btnSoundToggle" title="Sonido activado" class="w-9 h-9 rounded-xl bg-[var(--bg-subtle)] border border-[var(--border-color)] text-blue-600 dark:text-blue-400 hover:bg-slate-200 dark:hover:bg-gray-800 flex items-center justify-center transition-all shadow-sm">
+                    <i class="fa-solid fa-volume-high text-sm" id="soundIcon"></i>
+                </button>
+
+                <!-- Botón Actualizar Datos -->
+                <button type="button" id="btnRefresh" class="flex items-center bg-[var(--bg-subtle)] hover:bg-slate-200 dark:hover:bg-gray-800 border border-[var(--border-color)] text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm transition">
+                    <i class="fa-solid fa-rotate mr-1.5 text-slate-400"></i> Actualizar
+                </button>
+
+                <!-- Perfil Usuario Administrador -->
+                <div class="flex items-center pl-2 space-x-2 border-l border-[var(--border-color)]">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-black text-xs shadow-sm shadow-blue-500/30">
+                        A
+                    </div>
+                    <div class="text-left hidden sm:block">
+                        <div class="font-bold text-slate-900 dark:text-white text-xs leading-tight">Supervisor BPO</div>
+                        <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">En Turno</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENEDOR DE VISTAS AISLADAS (CADA UNA SE MUESTRA DE FORMA INDEPENDIENTE) -->
+        <main class="p-6 md:p-8 flex-1">
+
+            <!-- =========================================================================
+                 VISTA 1: DASHBOARD GENERAL (MÉTRICAS, GRÁFICOS Y CANALES)
+                 ========================================================================= -->
+            <section id="view-dashboard" class="view-section active space-y-6">
+
+                <!-- FILA 1: TARJETAS KPI REDISEÑADAS CON GLOW Y PROGRESO -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <!-- KPI 1: TMO PROMEDIO GENERAL (HERO CARD) -->
+                    <div class="pro-card pro-card-accent-emerald p-4 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">TMO GENERAL</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800" id="kpiTmoBadge">
+                                <i class="fa-solid fa-caret-down mr-1 text-emerald-500"></i> -2% (Meta 20s)
+                            </span>
+                        </div>
+                        <div class="mt-2.5">
+                            <div class="text-3xl font-black text-slate-900 dark:text-white tracking-tight font-mono" id="kpiTmoGeneral">19.55s</div>
+                            <div class="mt-2.5 w-full bg-slate-100 dark:bg-gray-800 rounded-full h-2 overflow-hidden p-0.5">
+                                <div class="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full transition-all duration-700" id="kpiTmoProgress" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 2: TALK TIME PROMEDIO -->
+                    <div class="pro-card pro-card-accent-blue p-4 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">TALK TIME</span>
+                            <div class="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2.5">
+                            <div class="text-3xl font-black text-slate-900 dark:text-white tracking-tight font-mono" id="kpiTalkTime">12.64s</div>
+                            <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1 truncate">Conversación activa</p>
+                        </div>
+                    </div>
+
+                    <!-- KPI 3: HOLD TIME PROMEDIO -->
+                    <div class="pro-card pro-card-accent-amber p-4 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">HOLD TIME</span>
+                            <div class="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-pause"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2.5">
+                            <div class="text-3xl font-black text-slate-900 dark:text-white tracking-tight font-mono" id="kpiHoldTime">4.18s</div>
+                            <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1 truncate">Tiempo en espera / consultas</p>
+                        </div>
+                    </div>
+
+                    <!-- KPI 4: WRAP-UP PROMEDIO -->
+                    <div class="pro-card pro-card-accent-purple p-4 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">WRAP-UP</span>
+                            <div class="w-6 h-6 rounded-lg bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2.5">
+                            <div class="text-3xl font-black text-slate-900 dark:text-white tracking-tight font-mono" id="kpiWrapUp">2.73s</div>
+                            <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1 truncate">Tipificación y cierre en CRM</p>
+                        </div>
+                    </div>
+
+                    <!-- KPI 5: TOTAL OPERACIONES -->
+                    <div class="pro-card pro-card-accent-rose p-4 flex flex-col justify-between col-span-2 md:col-span-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">OPERACIONES</span>
+                            <div class="w-6 h-6 rounded-lg bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2.5">
+                            <div class="text-3xl font-black text-slate-900 dark:text-white tracking-tight font-mono" id="kpiTotalOps">85</div>
+                            <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1 truncate">Gestiones consolidadas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FILA 2: COMPARATIVA DE CANALES Y GRÁFICAS -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                    <!-- 1. TMO por canal vs meta -->
+                    <div class="pro-card p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center">
+                                    <i class="fa-solid fa-chart-simple text-blue-600 mr-2"></i> TMO por Canal vs Meta
+                                </h3>
+                                <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded">3/4 Cumplen</span>
+                            </div>
+                            <p class="text-xs text-slate-400 dark:text-slate-500 mb-4">Comparativa de tiempos de atención</p>
+
+                            <!-- Lista de Canales con Barras de Progreso -->
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between items-center mb-1.5 text-xs">
+                                        <span class="font-semibold text-slate-700 dark:text-slate-300 flex items-center">
+                                            <i class="fa-solid fa-phone text-blue-500 mr-2 w-4"></i> Llamada Telefónica
+                                        </span>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="font-mono font-bold text-slate-800 dark:text-white">18.4s</span>
+                                            <span class="text-slate-400 font-mono text-[10px]">/ 20s</span>
+                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">En meta</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-full bg-slate-100 dark:bg-gray-800 rounded-full h-2 overflow-hidden">
+                                        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full" style="width: 80%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between items-center mb-1.5 text-xs">
+                                        <span class="font-semibold text-slate-700 dark:text-slate-300 flex items-center">
+                                            <i class="fa-solid fa-comments text-indigo-500 mr-2 w-4"></i> Chat en Vivo
+                                        </span>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="font-mono font-bold text-slate-800 dark:text-white">16.2s</span>
+                                            <span class="text-slate-400 font-mono text-[10px]">/ 20s</span>
+                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">En meta</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-full bg-slate-100 dark:bg-gray-800 rounded-full h-2 overflow-hidden">
+                                        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-full rounded-full" style="width: 70%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between items-center mb-1.5 text-xs">
+                                        <span class="font-semibold text-slate-700 dark:text-slate-300 flex items-center">
+                                            <i class="fa-brands fa-whatsapp text-emerald-500 mr-2 w-4"></i> WhatsApp
+                                        </span>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="font-mono font-bold text-slate-800 dark:text-white">17.8s</span>
+                                            <span class="text-slate-400 font-mono text-[10px]">/ 20s</span>
+                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">En meta</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-full bg-slate-100 dark:bg-gray-800 rounded-full h-2 overflow-hidden">
+                                        <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full" style="width: 78%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between items-center mb-1.5 text-xs">
+                                        <span class="font-semibold text-slate-700 dark:text-slate-300 flex items-center">
+                                            <i class="fa-solid fa-wrench text-rose-500 mr-2 w-4"></i> Soporte Técnico
+                                        </span>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="font-mono font-bold text-rose-600 dark:text-rose-400">26.5s</span>
+                                            <span class="text-slate-400 font-mono text-[10px]">/ 20s</span>
+                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">Revisión</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-full bg-slate-100 dark:bg-gray-800 rounded-full h-2 overflow-hidden">
+                                        <div class="bg-gradient-to-r from-rose-500 to-red-600 h-full rounded-full" style="width: 95%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 mt-4 border-t border-[var(--border-color)] flex justify-between items-center text-[11px] text-slate-400">
+                            <span>Límite estándar: <strong class="text-slate-700 dark:text-slate-200">20.00s</strong></span>
+                            <span class="text-blue-600 dark:text-blue-400 font-semibold"><i class="fa-solid fa-shield-halved mr-1"></i> SLA BPO 2026</span>
+                        </div>
+                    </div>
+
+                    <!-- 2. Gráfico de Barras con Colores por Umbral -->
+                    <div class="pro-card p-5">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm">TMO por Operador vs Meta</h3>
+                            <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-gray-800 px-2 py-0.5 rounded">Verde &le;20s | Rojo &gt;20s</span>
+                        </div>
+                        <p class="text-xs text-slate-400 dark:text-slate-500 mb-2">Evaluación individual de desviaciones</p>
+                        <div class="h-60 relative w-full">
+                            <canvas id="mainBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 3. Gráfico de Donas: Distribución Porcentual -->
+                    <div class="pro-card p-5">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm">Tasa de Aprobación Global</h3>
+                            <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full">62.5% Meta</span>
+                        </div>
+                        <p class="text-xs text-slate-400 dark:text-slate-500 mb-2">Proporción de agentes dentro del objetivo</p>
+                        <div class="h-60 relative w-full flex items-center justify-center">
+                            <canvas id="mainDonutChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACCESOS RÁPIDOS INFERIORES -->
+                <div class="p-4 bg-[var(--bg-subtle)] border border-[var(--border-color)] rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <div class="flex items-center space-x-2 text-slate-500 dark:text-slate-400 font-medium">
+                        <i class="fa-solid fa-circle-info text-blue-500"></i>
+                        <span>Turno activo: 85 gestiones procesadas y consolidadas con reglas matemáticas blindadas.</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button type="button" data-switch-view="livecall" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition flex items-center">
+                            <i class="fa-solid fa-stopwatch mr-1.5"></i> Abrir Cronómetro
+                        </button>
+                        <button type="button" data-switch-view="automation" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-semibold transition flex items-center">
+                            <i class="fa-solid fa-paper-plane mr-1.5"></i> Enviar Alertas
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- =========================================================================
+                 VISTA 2: CRONÓMETRO & REGISTRO DE LLAMADA EN VIVO
+                 ========================================================================= -->
+            <section id="view-livecall" class="view-section space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                    <!-- Cockpit Principal del Cronómetro -->
+                    <div class="pro-card p-6 lg:col-span-2 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-4 border-b border-[var(--border-color)]">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-headset text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-900 dark:text-white text-base">Cockpit de Medición en Tiempo Real</h3>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">Control de tiempos por fases de interacción BPO (Talk, Hold, Wrap-up)</p>
+                                    </div>
+                                </div>
+                                <span id="callStatusBadge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-ping"></span>
+                                    Listo
+                                </span>
+                            </div>
+
+                            <!-- Temporizador Digital con Ecualizador de Audio -->
+                            <div class="py-8 text-center bg-gradient-to-b from-transparent to-blue-50/30 dark:to-blue-950/20 rounded-2xl my-4 border border-[var(--border-color)]">
+                                <!-- Visualizador de audio activo -->
+                                <div class="audio-visualizer mb-3" id="callAudioWave">
+                                    <div class="audio-bar"></div>
+                                    <div class="audio-bar"></div>
+                                    <div class="audio-bar"></div>
+                                    <div class="audio-bar"></div>
+                                    <div class="audio-bar"></div>
+                                    <div class="audio-bar"></div>
+                                </div>
+
+                                <div class="font-mono text-6xl md:text-7xl font-black text-slate-900 dark:text-white tracking-widest drop-shadow-sm" id="digitalTimer">
+                                    00:00
+                                </div>
+                                <p class="text-xs text-slate-400 dark:text-slate-500 mt-2 font-medium" id="timerSubtitle">Selecciona una fase para iniciar la gestión</p>
+                            </div>
+
+                            <!-- Selector de Agente y Canal -->
+                            <div class="grid grid-cols-2 gap-4 mb-5">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                                        <i class="fa-regular fa-user mr-1 text-slate-400"></i> Agente Activo
+                                    </label>
+                                    <select id="selLiveAgent" class="w-full bg-[var(--bg-subtle)] border border-[var(--border-color)] rounded-xl px-3.5 py-2.5 text-xs text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                        <option value="Laura Restrepo">Laura Restrepo (Célula F1)</option>
+                                        <option value="Daniela Salazar">Daniela Salazar (Célula F1)</option>
+                                        <option value="Carlos Mendoza">Carlos Mendoza (Célula F1)</option>
+                                        <option value="Valentina Gomez">Valentina Gomez (Célula F2)</option>
+                                        <option value="Camila Torres">Camila Torres (Célula F2)</option>
+                                        <option value="Andrés Morales">Andrés Morales (Célula F3)</option>
+                                        <option value="Felipe Herrera">Felipe Herrera (Célula F3)</option>
+                                        <option value="Mateo Cárdenas">Mateo Cárdenas (Célula F3)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                                        <i class="fa-solid fa-route mr-1 text-slate-400"></i> Canal de Atención
+                                    </label>
+                                    <select id="selLiveChannel" class="w-full bg-[var(--bg-subtle)] border border-[var(--border-color)] rounded-xl px-3.5 py-2.5 text-xs text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                        <option value="Llamada Telefónica">Llamada Telefónica</option>
+                                        <option value="Chat en Vivo">Chat en Vivo</option>
+                                        <option value="WhatsApp">WhatsApp</option>
+                                        <option value="Soporte Técnico">Soporte Técnico</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Botones de Fases de Llamada (Talk, Hold, Wrap-up) -->
+                            <div class="grid grid-cols-3 gap-3">
+                                <button type="button" id="btnPhaseTalk" class="flex flex-col items-center justify-center p-4 rounded-xl border border-blue-200 dark:border-blue-900/60 bg-blue-50/70 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-900 dark:text-blue-300 font-semibold transition group">
+                                    <span class="flex items-center text-xs mb-1">
+                                        <i class="fa-solid fa-phone mr-1.5 text-blue-600 dark:text-blue-400"></i> Talk Time
+                                    </span>
+                                    <span id="timerPhaseTalk" class="font-mono text-base font-bold">00:00</span>
+                                    <span class="text-[10px] text-blue-500 mt-1 opacity-70 group-hover:opacity-100">Iniciar conversación</span>
+                                </button>
+
+                                <button type="button" id="btnPhaseHold" class="flex flex-col items-center justify-center p-4 rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/40 hover:bg-amber-100 text-amber-900 dark:text-amber-300 font-semibold transition group">
+                                    <span class="flex items-center text-xs mb-1">
+                                        <i class="fa-solid fa-pause mr-1.5 text-amber-600 dark:text-amber-400"></i> Hold Time
+                                    </span>
+                                    <span id="timerPhaseHold" class="font-mono text-base font-bold">00:00</span>
+                                    <span class="text-[10px] text-amber-500 mt-1 opacity-70 group-hover:opacity-100">Pausar llamada</span>
+                                </button>
+
+                                <button type="button" id="btnPhaseWrap" class="flex flex-col items-center justify-center p-4 rounded-xl border border-purple-200 dark:border-purple-900/60 bg-purple-50/70 dark:bg-purple-950/40 hover:bg-purple-100 text-purple-900 dark:text-purple-300 font-semibold transition group">
+                                    <span class="flex items-center text-xs mb-1">
+                                        <i class="fa-solid fa-check-double mr-1.5 text-purple-600 dark:text-purple-400"></i> Wrap-up
+                                    </span>
+                                    <span id="timerPhaseWrap" class="font-mono text-base font-bold">00:00</span>
+                                    <span class="text-[10px] text-purple-500 mt-1 opacity-70 group-hover:opacity-100">Cierre y CRM</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Botón Finalizar y Guardar -->
+                        <div class="pt-6 mt-6 border-t border-[var(--border-color)]">
+                            <button type="button" id="btnSaveLiveCall" class="w-full bg-slate-900 hover:bg-black dark:bg-blue-600 dark:hover:bg-blue-700 text-white py-3.5 rounded-xl font-bold text-xs tracking-wider shadow-md transition flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+                                <span>FINALIZAR Y REGISTRAR GESTIÓN</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panel Lateral: Instrucciones y Guía Operativa -->
+                    <div class="space-y-4">
+                        <div class="pro-card p-5 space-y-3">
+                            <h4 class="font-bold text-slate-900 dark:text-white text-sm flex items-center">
+                                <i class="fa-solid fa-circle-question text-blue-500 mr-2"></i> ¿Cómo medir el TMO?
+                            </h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                El <strong>Tiempo Medio Operativo (TMO)</strong> es la suma exacta de las 3 fases críticas de atención:
+                            </p>
+                            <div class="space-y-2 text-xs">
+                                <div class="p-2.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50">
+                                    <strong class="text-blue-700 dark:text-blue-300">1. Talk Time:</strong> Tiempo en conversación con el usuario.
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50">
+                                    <strong class="text-amber-700 dark:text-amber-300">2. Hold Time:</strong> Tiempo en espera para consultas o sistema.
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-900/50">
+                                    <strong class="text-purple-700 dark:text-purple-300">3. Wrap-up:</strong> Registro de ticket y tipificación en CRM.
+                                </div>
+                            </div>
+                            <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-[11px] text-emerald-800 dark:text-emerald-300">
+                                <i class="fa-solid fa-bullseye mr-1"></i> <strong>Meta oficial:</strong> Mantener el promedio acumulado en $\le 20\text{ segundos}$.
+                            </div>
+                        </div>
+
+                        <div class="pro-card p-5">
+                            <h4 class="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider text-slate-400 mb-3">
+                                Última gestión guardada
+                            </h4>
+                            <div class="text-xs space-y-1.5" id="lastSavedCallBox">
+                                <div class="text-slate-500 dark:text-slate-400">Aún no has registrado llamadas en esta sesión.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+
+            <!-- =========================================================================
+                 VISTA 3: RENDIMIENTO POR OPERADORES & CÉLULAS
+                 ========================================================================= -->
+            <section id="view-operators" class="view-section space-y-6">
+
+                <!-- Resumen por Células de Trabajo -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="pro-card p-4 border-l-4 border-l-blue-500">
+                        <div class="flex justify-between items-center mb-1">
+                            <h4 class="font-bold text-xs text-slate-800 dark:text-white">Célula F1 - Facturación & ATC</h4>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">100% en Meta</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Laura Restrepo, Daniela Salazar, Carlos Mendoza, María Valencia</p>
+                        <div class="mt-2 text-xs font-mono font-bold text-blue-600">TMO Promedio: 14.8s (Excelente)</div>
+                    </div>
+
+                    <div class="pro-card p-4 border-l-4 border-l-indigo-500">
+                        <div class="flex justify-between items-center mb-1">
+                            <h4 class="font-bold text-xs text-slate-800 dark:text-white">Célula F2 - Ventas & Digital</h4>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">100% en Meta</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Valentina Gomez, Camila Torres</p>
+                        <div class="mt-2 text-xs font-mono font-bold text-indigo-600">TMO Promedio: 17.4s (En Meta)</div>
+                    </div>
+
+                    <div class="pro-card p-4 border-l-4 border-l-rose-500">
+                        <div class="flex justify-between items-center mb-1">
+                            <h4 class="font-bold text-xs text-slate-800 dark:text-white">Célula F3 - Soporte & Retenciones</h4>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">Revisión Requerida</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Andrés Morales, Felipe Herrera, Mateo Cárdenas</p>
+                        <div class="mt-2 text-xs font-mono font-bold text-rose-600">TMO Promedio: 26.6s (Supera 20s)</div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Operadores -->
+                <div class="pro-card overflow-hidden" id="operadoresSection">
+                    <div class="p-5 border-b border-[var(--border-color)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-[var(--bg-subtle)]">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                <i class="fa-solid fa-users text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white text-sm">Rendimiento Consolidado por Operador</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Tiempos promedios por fase de gestión y estado respecto al límite de 20s</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Ordenar por:</span>
+                            <select id="selOrderOperator" class="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-200 outline-none">
+                                <option value="tmo_desc" selected>TMO (Mayor a Menor - Críticos primero)</option>
+                                <option value="tmo_asc">TMO (Menor a Mayor - Destacados primero)</option>
+                                <option value="ops">Cantidad de Gestiones</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Operadores -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs pro-table">
+                            <thead>
+                                <tr class="border-b border-[var(--border-color)]">
+                                    <th class="px-5 py-3">#</th>
+                                    <th class="px-5 py-3">Operador</th>
+                                    <th class="px-5 py-3">Rol / Célula</th>
+                                    <th class="px-5 py-3 text-right">Talk Time</th>
+                                    <th class="px-5 py-3 text-right">Hold Time</th>
+                                    <th class="px-5 py-3 text-right">Wrap-up</th>
+                                    <th class="px-5 py-3 text-right font-bold text-slate-800 dark:text-slate-200">TMO Promedio</th>
+                                    <th class="px-5 py-3 text-center">Gestiones</th>
+                                    <th class="px-5 py-3 text-center">Estado Oficial</th>
+                                    <th class="px-5 py-3 text-center">Acción Directa</th>
+                                </tr>
+                            </thead>
+                            <tbody id="operatorTableBody" class="divide-y divide-[var(--border-color)]">
+                                <!-- Filas generadas dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- =========================================================================
+                 VISTA 4: AUDITORÍA & ASISTENTE IA (COPILOT CONVERSACIONAL NLU)
+                 ========================================================================= -->
+            <section id="view-ai" class="view-section space-y-6">
+
+                <!-- Header del Centro de Inteligencia -->
+                <div class="bg-gradient-to-br from-indigo-950 via-slate-950 to-purple-950 rounded-2xl p-6 text-white shadow-xl border border-indigo-500/30 relative overflow-hidden" id="aiAssistantSection">
+                    <div class="absolute -right-8 -bottom-8 opacity-10 text-9xl pointer-events-none text-purple-400">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 pb-4 border-b border-indigo-800/60">
+                        <div class="flex items-center space-x-3.5">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-300 text-2xl shadow-inner">
+                                <i class="fa-solid fa-sparkles"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="font-bold text-lg text-white tracking-tight">Copilot de Operaciones BPO</h3>
+                                    <span class="bg-purple-500/30 text-purple-200 border border-purple-400/30 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                                        NLU Conversacional
+                                    </span>
+                                </div>
+                                <p class="text-xs text-indigo-200/80">
+                                    Asistente experto en TMO: haz preguntas en lenguaje natural sobre cualquier operador, canal o métrica.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2 text-xs">
+                            <span class="px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold flex items-center shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-ping"></span>
+                                Contexto Operativo 100% Blindado
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Diagnóstico Automático y Plan Táctico -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-5">
+                        <div class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 space-y-2.5">
+                            <div class="flex items-center justify-between text-xs font-bold text-purple-300">
+                                <span class="flex items-center"><i class="fa-solid fa-magnifying-glass-chart mr-2 text-purple-400"></i> Diagnóstico de Anomalías Detectadas</span>
+                                <span class="text-[10px] bg-rose-500/20 border border-rose-500/40 px-2 py-0.5 rounded-full text-rose-200 font-bold">3 Agentes Críticos</span>
+                            </div>
+                            <div class="text-xs text-slate-200 leading-relaxed font-sans" id="aiDiagnosticText">
+                                Se identificaron <strong>3 agentes con TMO superior al límite de 20s</strong>: Felipe Herrera (30.00s, +50%), Andrés Morales (25.45s, +27.3%) y Mateo Cárdenas (24.50s, +22.5%). La principal causa radica en tiempos muertos de tipificación post-llamada (Wrap-up) y mayor volumen en el canal de Soporte Técnico. <em>Los 5 agentes restantes cumplen satisfactoriamente el objetivo (62.5% de cumplimiento global).</em>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 space-y-2.5">
+                            <div class="flex items-center justify-between text-xs font-bold text-emerald-300">
+                                <span class="flex items-center"><i class="fa-solid fa-graduation-cap mr-2 text-emerald-400"></i> Plan Táctico de Coaching para el Supervisor</span>
+                                <span class="text-[10px] bg-emerald-500/20 border border-emerald-500/40 px-2 py-0.5 rounded-full text-emerald-200 font-bold">Acciones Recomendadas</span>
+                            </div>
+                            <div class="text-xs text-slate-200 space-y-2 font-sans" id="aiCoachingText">
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-purple-400 font-bold text-sm leading-none">•</span>
+                                    <span><strong>Andrés Morales:</strong> Aplicar regla de escalamiento a segundo nivel antes de los 15s en gestiones complejas.</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-purple-400 font-bold text-sm leading-none">•</span>
+                                    <span><strong>Felipe Herrera:</strong> Capacitar en plantillas de cierre rápido en CRM para reducir su Wrap-up a menos de 2s.</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-purple-400 font-bold text-sm leading-none">•</span>
+                                    <span><strong>Mateo Cárdenas:</strong> Programar sesión de shadowing con Laura Restrepo (mejor TMO del equipo: 12.64s).</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Historial de Conversación Chat con IA (NLU) -->
+                <div class="pro-card p-6 space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-comments text-purple-600 text-base"></i>
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm">Chat Conversacional de Operaciones</h3>
+                        </div>
+                        <span class="text-xs text-slate-400">Pregunta lo que necesites en español cotidiano</span>
+                    </div>
+
+                    <!-- Mensajes del Chat -->
+                    <div class="chat-container min-h-[220px]" id="chatMessagesContainer">
+                        <!-- Mensaje de bienvenida inicial de la IA -->
+                        <div class="chat-bubble-ai">
+                            👋 <strong>¡Hola, Supervisor!</strong> Soy tu Copilot de Operaciones BPO. He analizado las <strong>85 gestiones</strong> de la jornada. 
+                            Puedes preguntarme libremente en lenguaje natural, por ejemplo:
+                            <div class="mt-2 text-xs space-y-1 text-slate-300">
+                                <div>• <em>"¿Cómo le fue a Andrés hoy?"</em></div>
+                                <div>• <em>"¿Quiénes son los agentes que tuvieron peor desempeño?"</em></div>
+                                <div>• <em>"¿Por qué el canal de Soporte Técnico está tan lento?"</em></div>
+                                <div>• <em>"¿Cuál es el tiempo de espera promedio del equipo?"</em></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chips de Preguntas Rápidas en Lenguaje Cotidiano -->
+                    <div class="flex flex-wrap items-center gap-2 pt-2" id="aiPromptChips">
+                        <span class="text-xs font-semibold text-slate-400 mr-1 flex items-center">
+                            <i class="fa-solid fa-lightbulb text-amber-400 mr-1.5"></i> Sugerencias:
+                        </span>
+                        <button type="button" class="ai-chip text-xs bg-[var(--bg-subtle)] hover:bg-purple-100 dark:hover:bg-purple-950/60 border border-[var(--border-color)] px-3 py-1.5 rounded-xl transition text-slate-700 dark:text-slate-300">
+                            ¿Cómo le fue a Andrés Morales?
+                        </button>
+                        <button type="button" class="ai-chip text-xs bg-[var(--bg-subtle)] hover:bg-purple-100 dark:hover:bg-purple-950/60 border border-[var(--border-color)] px-3 py-1.5 rounded-xl transition text-slate-700 dark:text-slate-300">
+                            ¿Quiénes tuvieron desempeño bajo?
+                        </button>
+                        <button type="button" class="ai-chip text-xs bg-[var(--bg-subtle)] hover:bg-purple-100 dark:hover:bg-purple-950/60 border border-[var(--border-color)] px-3 py-1.5 rounded-xl transition text-slate-700 dark:text-slate-300">
+                            ¿Quién fue el mejor operador?
+                        </button>
+                        <button type="button" class="ai-chip text-xs bg-[var(--bg-subtle)] hover:bg-purple-100 dark:hover:bg-purple-950/60 border border-[var(--border-color)] px-3 py-1.5 rounded-xl transition text-slate-700 dark:text-slate-300">
+                            ¿Qué canal tiene más demoras?
+                        </button>
+                        <button type="button" class="ai-chip text-xs bg-[var(--bg-subtle)] hover:bg-purple-100 dark:hover:bg-purple-950/60 border border-[var(--border-color)] px-3 py-1.5 rounded-xl transition text-slate-700 dark:text-slate-300">
+                            Plan de mejora para los agentes críticos
+                        </button>
+                    </div>
+
+                    <!-- Input para escribir la pregunta -->
+                    <div class="flex items-center space-x-2 pt-2">
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-comment-dots absolute left-3.5 top-3 text-purple-400 text-sm"></i>
+                            <input type="text" id="txtAiQuestion" placeholder="Escribe tu consulta en lenguaje cotidiano (ej: 'dime el resumen de Andrés y qué debe mejorar')..." class="w-full bg-[var(--bg-subtle)] border border-[var(--border-color)] rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-800 dark:text-white placeholder-slate-400 outline-none focus:ring-2 focus:ring-purple-500 transition">
+                        </div>
+                        <button type="button" id="btnAskAi" class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center space-x-2 whitespace-nowrap">
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                            <span>Preguntar</span>
+                        </button>
+                    </div>
+
+                    <!-- Contenedor oculto para compatibilidad de selector JS anterior -->
+                    <div id="aiAnswerBox" class="hidden"><p id="aiAnswerContent"></p></div>
+                </div>
+
+            </section>
+
+
+            <!-- =========================================================================
+                 VISTA 5: HISTORIAL DETALLADO DE GESTIONES
+                 ========================================================================= -->
+            <section id="view-history" class="view-section space-y-6">
+
+                <div class="pro-card overflow-hidden" id="historialSection">
+                    <div class="p-5 border-b border-[var(--border-color)] flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-[var(--bg-subtle)]">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                <i class="fa-regular fa-clock text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white text-sm">Historial Detallado de Gestiones</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Trazabilidad individual de cada llamada y ticket registrado</p>
+                            </div>
+                        </div>
+
+                        <!-- Filtros del Historial -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                                <input type="text" id="txtSearchHistory" placeholder="Buscar por agente, cliente, ticket..." class="pl-9 pr-3 py-1.5 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl text-xs text-slate-700 dark:text-slate-200 w-60 outline-none focus:border-blue-500">
+                            </div>
+                            <select id="selFilterChannel" class="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl px-3 py-1.5 text-xs text-slate-700 dark:text-slate-200 outline-none">
+                                <option value="ALL">Todos los canales</option>
+                                <option value="Llamada Telefónica">Llamada Telefónica</option>
+                                <option value="Chat en Vivo">Chat en Vivo</option>
+                                <option value="WhatsApp">WhatsApp</option>
+                                <option value="Soporte Técnico">Soporte Técnico</option>
+                            </select>
+                            <select id="selFilterAgent" class="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl px-3 py-1.5 text-xs text-slate-700 dark:text-slate-200 outline-none">
+                                <option value="ALL">Todos los operadores</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Historial con Scroll Propio -->
+                    <div class="overflow-x-auto max-h-[520px]">
+                        <table class="w-full text-left text-xs pro-table">
+                            <thead class="sticky top-0 z-10">
+                                <tr class="border-b border-[var(--border-color)]">
+                                    <th class="px-5 py-3">#</th>
+                                    <th class="px-5 py-3">Fecha y Hora</th>
+                                    <th class="px-5 py-3">Canal</th>
+                                    <th class="px-5 py-3">Operador</th>
+                                    <th class="px-5 py-3">Cliente / Ticket</th>
+                                    <th class="px-5 py-3 text-right">Talk</th>
+                                    <th class="px-5 py-3 text-right">Hold</th>
+                                    <th class="px-5 py-3 text-right">Wrap</th>
+                                    <th class="px-5 py-3 text-right font-bold text-slate-800 dark:text-slate-200">TMO</th>
+                                    <th class="px-5 py-3 text-center">Gestiones</th>
+                                    <th class="px-5 py-3 text-center">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody" class="divide-y divide-[var(--border-color)]">
+                                <!-- Filas de llamadas individuales -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Barra Inferior de Descarga y Auditoría IA -->
+                    <div class="p-4 bg-[var(--bg-subtle)] border-t border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center space-x-2 text-slate-500 dark:text-slate-400 font-medium" id="historyCounterBadge">
+                            Mostrando 85 operaciones registradas
+                        </div>
+                        <div class="flex items-center space-x-2.5">
+                            <a href="/download/consolidado" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-sm transition flex items-center">
+                                <i class="fa-solid fa-file-excel mr-2 text-sm"></i> Descargar Excel con Gráficos
+                            </a>
+                            <a href="/download/auditoria" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-sm transition flex items-center">
+                                <i class="fa-solid fa-robot mr-2 text-sm"></i> Descargar Auditoría IA
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- =========================================================================
+                 VISTA 6: AUTOMATIZACIÓN, n8n & MÓDULO DE ALERTAS A TRABAJADORES
+                 ========================================================================= -->
+            <section id="view-automation" class="view-section space-y-6">
+
+                <!-- TARJETA DESTACADA: DESPACHO DIRECTO DE ALERTA AL TRABAJADOR ANDRÉS -->
+                <div class="pro-card p-6 border-2 border-rose-500/40 bg-gradient-to-br from-rose-50/60 via-white to-amber-50/40 dark:from-rose-950/20 dark:via-gray-900 dark:to-amber-950/20">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-rose-200 dark:border-rose-900/50">
+                        <div class="flex items-center space-x-3.5">
+                            <div class="w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center text-xl shadow-lg shadow-rose-500/30">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="font-bold text-slate-900 dark:text-white text-base">Alerta Individual y Plan de Mejora: Andrés Morales</h3>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-300">BAJO DESEMPEÑO</span>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                    Genera el reporte individual del trabajador y despacha la notificación de retroalimentación constructiva a su correo.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-mono text-2xl font-black text-rose-600 dark:text-rose-400">25.45s</div>
+                            <div class="text-[10px] text-slate-400 font-semibold">+27.3% sobre la meta (20s)</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-5">
+                        <div class="bg-white dark:bg-gray-800/80 p-3.5 rounded-xl border border-[var(--border-color)]">
+                            <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Correo de Destino del Trabajador</span>
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-envelope text-blue-500 text-xs"></i>
+                                <input type="email" id="txtDirectWorkerEmail" value="andrxscxx@gmail.com" class="w-full bg-transparent font-mono text-xs font-bold text-slate-800 dark:text-white outline-none">
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800/80 p-3.5 rounded-xl border border-[var(--border-color)]">
+                            <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Desglose de Fases</span>
+                            <div class="text-xs text-slate-700 dark:text-slate-300 font-mono space-x-2">
+                                <span>Talk: <strong>17.2s</strong></span> • 
+                                <span>Hold: <strong>5.1s</strong></span> • 
+                                <span>Wrap: <strong>3.15s</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800/80 p-3.5 rounded-xl border border-[var(--border-color)]">
+                            <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Acción IA Clave</span>
+                            <div class="text-xs text-slate-700 dark:text-slate-300 truncate">
+                                Escalar a 2do nivel antes de 15s y usar plantillas CRM.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón de Despacho Inmediato para Andrés -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 flex items-center">
+                            <i class="fa-solid fa-paperclip text-slate-400 mr-2"></i>
+                            <span>Adjunta automáticamente el libro <strong>reporte_consolidado_tmo.xlsx</strong></span>
+                        </div>
+                        <button type="button" id="btnSendAndresAlert" class="px-5 py-2.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center space-x-2">
+                            <i class="fa-solid fa-paper-plane mr-1 text-sm"></i>
+                            <span>Despachar Alerta a Andrés (andrxscxx@gmail.com)</span>
+                        </button>
+                    </div>
+
+                    <div id="workerAlertStatusBox" class="hidden mt-4 p-3.5 rounded-xl text-xs font-medium"></div>
+                </div>
+
+                <!-- CARGA MASIVA EXCEL & n8n WEBHOOK -->
+                <div class="pro-card p-6" id="n8nCard">
+                    <div class="flex items-center justify-between pb-4 border-b border-[var(--border-color)]">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                <i class="fa-regular fa-file-excel text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white text-sm">Carga Masiva Excel & Automatización n8n</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Procesamiento de datasets &ge;50 filas, persistencia Supabase y reporte general</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                            <i class="fa-solid fa-bolt mr-1"></i> Webhook n8n
+                        </span>
+                    </div>
+
+                    <!-- Zona Drag & Drop -->
+                    <div class="my-4 p-6 pro-dropzone text-center" id="dropZoneMini">
+                        <input type="file" id="fileInputMini" accept=".xlsx, .xls, .csv" class="hidden">
+                        <div class="space-y-1.5">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 mx-auto flex items-center justify-center text-xl shadow-inner">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            <p class="font-bold text-slate-800 dark:text-slate-200 text-xs">Arrastra aquí tu archivo Excel o haz clic para seleccionarlo</p>
+                            <p class="text-[11px] text-slate-400 dark:text-slate-500">Soporta datasets con gestiones reales del call center</p>
+                        </div>
+                        <div class="flex justify-center space-x-2.5 mt-3">
+                            <button type="button" onclick="document.getElementById('fileInputMini').click()" class="px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 border border-[var(--border-color)] text-slate-700 dark:text-slate-200 rounded-lg text-xs font-semibold shadow-sm transition">
+                                <i class="fa-regular fa-folder-open mr-1"></i> Explorar Archivo
+                            </button>
+                            <button type="button" id="btnLoadSampleDataset" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm transition flex items-center">
+                                <i class="fa-solid fa-wand-magic-sparkles mr-1.5 text-amber-300"></i> Cargar Muestra (85 filas)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Parámetros de Envío -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Correo del Supervisor (Reporte General)</label>
+                                <button type="button" id="btnOpenSmtpModal" class="text-[10px] text-blue-600 dark:text-blue-400 hover:underline font-bold flex items-center">
+                                    <i class="fa-solid fa-gear mr-1 text-slate-400"></i> Remitente SMTP
+                                </button>
+                            </div>
+                            <input type="email" id="txtTargetEmail" value="andrescassiani46@gmail.com" class="w-full bg-[var(--bg-subtle)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Límite TMO Meta (segundos)</label>
+                            <input type="number" id="txtTmoThreshold" value="20" class="w-full bg-[var(--bg-subtle)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 font-mono">
+                        </div>
+                    </div>
+
+                    <!-- Modos de Envío -->
+                    <div class="mb-4 bg-[var(--bg-subtle)] p-3 rounded-xl border border-[var(--border-color)]">
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                            <i class="fa-solid fa-paper-plane mr-1 text-blue-500"></i> Modalidad de Ejecución
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700 dark:text-slate-300">
+                            <label class="flex items-center space-x-2 cursor-pointer bg-[var(--bg-surface)] p-2 rounded-lg border border-[var(--border-color)] hover:border-blue-500 transition">
+                                <input type="radio" name="radSendMode" value="AUTOMATICO" checked class="text-blue-600 focus:ring-blue-500">
+                                <span class="font-medium text-[11px]">Envío inmediato a n8n</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer bg-[var(--bg-surface)] p-2 rounded-lg border border-[var(--border-color)] hover:border-blue-500 transition">
+                                <input type="radio" name="radSendMode" value="REVISION_MANUAL" class="text-blue-600 focus:ring-blue-500">
+                                <span class="font-medium text-[11px]">Revisar reporte antes de enviar</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Botón Enviar a n8n -->
+                    <div class="space-y-2">
+                        <button type="button" id="btnTriggerN8nPipeline" class="btn-primary btn-shine w-full py-3.5 rounded-xl font-bold text-xs tracking-wider shadow-md transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>EJECUTAR FLUJO n8n & DESPACHAR REPORTE GENERAL</span>
+                        </button>
+                        <div id="pipelineStatusMessage" class="hidden p-3.5 rounded-xl text-xs font-medium"></div>
+                    </div>
+
+                    <!-- Mini resumen de TMO previo para el webhook -->
+                    <div class="mt-4 hidden" id="previewWebhookBlock">
+                        <span id="liveCalculatedTmo">19.55s</span>
+                        <span id="liveTmoStatusBadge">En meta</span>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL DE CONFIGURACIÓN DE CORREO REMITENTE REAL -->
+    <div id="smtpModal" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[var(--bg-surface)] rounded-2xl max-w-md w-full shadow-2xl border border-[var(--border-color)] overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-900 to-blue-950 text-white p-5 flex justify-between items-center border-b border-blue-900/50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                        <i class="fa-solid fa-envelope-circle-check"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm">Configurar Remitente Real</h3>
+                        <p class="text-[11px] text-blue-200">Envío directo desde tu correo institucional o personal</p>
+                    </div>
+                </div>
+                <button type="button" id="btnCloseSmtpModal" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+            </div>
+            <div class="p-6 space-y-4 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Proveedor de Correo</label>
+                    <select id="smtpProvider" class="w-full border border-[var(--border-color)] rounded-xl p-2.5 text-xs outline-none bg-[var(--bg-subtle)] text-slate-800 dark:text-white">
+                        <option value="gmail">Gmail (Recomendado - Puerto 465)</option>
+                        <option value="outlook">Outlook / Hotmail / Office 365</option>
+                        <option value="custom">Servidor SMTP Corporativo Personalizado</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Tu Correo Remitente</label>
+                    <input type="email" id="smtpUser" placeholder="tu_cuenta@gmail.com" class="w-full border border-[var(--border-color)] rounded-xl p-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-[var(--bg-subtle)] text-slate-800 dark:text-white font-mono">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Contraseña de Aplicación / Clave</label>
+                    <input type="password" id="smtpPass" placeholder="Contraseña de aplicación" class="w-full border border-[var(--border-color)] rounded-xl p-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-[var(--bg-subtle)] text-slate-800 dark:text-white font-mono">
+                    <p class="text-[11px] text-slate-400 mt-1.5" id="smtpHint">
+                        Para Gmail, genera una <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-blue-500 underline font-semibold">Contraseña de Aplicación de 16 letras</a>.
+                    </p>
+                </div>
+                <div id="customSmtpFields" class="hidden grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Host SMTP</label>
+                        <input type="text" id="smtpHost" value="smtp.gmail.com" class="w-full border border-[var(--border-color)] rounded-xl p-2 text-xs outline-none bg-[var(--bg-subtle)]">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Puerto</label>
+                        <input type="number" id="smtpPort" value="465" class="w-full border border-[var(--border-color)] rounded-xl p-2 text-xs outline-none bg-[var(--bg-subtle)]">
+                    </div>
+                </div>
+                <div id="smtpTestStatus" class="hidden p-3.5 rounded-xl text-xs font-medium"></div>
+            </div>
+            <div class="bg-[var(--bg-subtle)] p-4 border-t border-[var(--border-color)] flex justify-end space-x-2.5">
+                <button type="button" id="btnCancelSmtp" class="px-4 py-2 rounded-xl border border-[var(--border-color)] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-gray-800 font-semibold text-xs">Cancelar</button>
+                <button type="button" id="btnSaveSmtp" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center shadow-md transition">
+                    <i class="fa-solid fa-save mr-2"></i> Guardar y Probar Conexión
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de la Aplicación -->
+    <script src="app.js"></script>
+</body>
+</html>

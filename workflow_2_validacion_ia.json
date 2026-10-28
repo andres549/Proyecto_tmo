@@ -1,0 +1,307 @@
+{
+  "name": "Flujo 2 — Validación Independiente, Looping y Asistente IA",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "readStatus": "unread",
+          "subject": "[REPORTE TMO CONSOLIDADO]"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "id": "2b000002-0000-4000-8000-000000000001",
+      "name": "Email Trigger - Detectar Reporte Consolidado",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [160, 360]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tmo-validation-trigger",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "2b000002-0000-4000-8000-000000000002",
+      "name": "Webhook - Validación Manual",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [160, 180]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT clave, valor_numerico, valor_texto FROM public.app_settings WHERE clave IN ('tmo_limite_segundos', 'correo_alertas_revision', 'correo_destinatario_defecto');"
+      },
+      "id": "2b000002-0000-4000-8000-000000000003",
+      "name": "Supabase - Leer Límite en app_settings",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [420, 260],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-postgres-cred",
+          "name": "Supabase PostgreSQL Connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "2b000002-0000-4000-8000-000000000004",
+      "name": "Loop Over Items - Validar Agentes",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [660, 260]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Reglas Oficiales de Clasificación:\n// 1. TMO <= límite -> APROBADO\n// 2. TMO > límite -> REQUIERE REVISIÓN\n// 3. Dato vacío o no válido -> ERROR DE DATOS\n\nconst configRows = $('Supabase - Leer Límite en app_settings').all();\nlet limite = 20.0;\nlet correoAlertas = 'andrescassiani46@gmail.com';\n\nfor (const r of configRows) {\n  if (r.json.clave === 'tmo_limite_segundos') limite = parseFloat(r.json.valor_numerico);\n  if (r.json.clave === 'correo_alertas_revision') correoAlertas = r.json.valor_texto;\n}\n\nconst inputItems = $input.all();\nlet agentesList = [];\n\nif (inputItems[0].json && inputItems[0].json.tmo_summaries) {\n  agentesList = inputItems[0].json.tmo_summaries;\n} else if (inputItems[0].json && inputItems[0].json.agentes) {\n  agentesList = inputItems[0].json.agentes;\n} else {\n  agentesList = inputItems.map(i => i.json);\n}\n\nconst aprobados = [];\nconst requiereRevision = [];\nconst errorDatos = [];\n\nfor (const row of agentesList) {\n  const nombre = (row.nombre_agente || row.operador || row.agente || row.nombre || '').toString().trim();\n  const rawTmo = (row.tmo_promedio_segundos !== undefined) ? row.tmo_promedio_segundos : (row.tmo || row.tmoPromedio || row['TMO Promedio']);\n  const tmoVal = parseFloat(rawTmo);\n\n  if (!nombre || isNaN(tmoVal) || tmoVal === null || tmoVal === undefined) {\n    errorDatos.push({\n      agente: nombre || 'DESCONOCIDO',\n      tmo_promedio: null,\n      limite: limite,\n      clasificacion: 'ERROR DE DATOS',\n      detalle: 'Tiempo de gestión vacío o formato no numérico'\n    });\n  } else if (tmoVal <= limite) {\n    aprobados.push({\n      agente: nombre,\n      tmo_promedio: tmoVal,\n      limite: limite,\n      porcentaje_limite: Math.round((tmoVal / limite) * 10000) / 100,\n      clasificacion: 'APROBADO'\n    });\n  } else {\n    requiereRevision.push({\n      agente: nombre,\n      tmo_promedio: tmoVal,\n      limite: limite,\n      porcentaje_limite: Math.round((tmoVal / limite) * 10000) / 100,\n      clasificacion: 'REQUIERE REVISIÓN'\n    });\n  }\n}\n\nreturn [{\n  json: {\n    limite_aplicado: limite,\n    correo_alertas: correoAlertas,\n    total_evaluados: agentesList.length,\n    total_aprobados: aprobados.length,\n    total_requiere_revision: requiereRevision.length,\n    total_error_datos: errorDatos.length,\n    lista_aprobados: aprobados,\n    lista_requiere_revision: requiereRevision,\n    lista_error_datos: errorDatos,\n    todos_los_resultados: [...aprobados, ...requiereRevision, ...errorDatos]\n  }\n}];"
+      },
+      "id": "2b000002-0000-4000-8000-000000000005",
+      "name": "Clasificador por Reglas de Negocio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 260]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Eres un Asistente de IA Experto en Gestión Operativa BPO. Tu función es auditar los resultados de validación, identificar anomalías y formular observaciones tácticas para el supervisor. Nota: No debes inventar datos ni modificar la clasificación calculada por las reglas programadas."
+            },
+            {
+              "role": "user",
+              "content": "=Analiza los siguientes resultados de TMO:\nLímite oficial: {{ $json.limite_aplicado }} segundos.\nTotal evaluados: {{ $json.total_evaluados }}\nAprobados: {{ $json.total_aprobados }}\nRequieren Revisión: {{ $json.total_requiere_revision }}\nErrores de datos: {{ $json.total_error_datos }}\n\nDetalle de agentes que superaron el límite:\n{{ JSON.stringify($json.lista_requiere_revision, null, 2) }}\n\nDetalle de errores de datos:\n{{ JSON.stringify($json.lista_error_datos, null, 2) }}\n\nResponde en formato JSON con las claves: 'resumen_observaciones' y 'plan_coaching_sugerido'."
+            }
+          ]
+        },
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "id": "2b000002-0000-4000-8000-000000000006",
+      "name": "Asistente IA - Revisión y Detección de Anomalías",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [1140, 260],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-cred-id",
+          "name": "OpenAI Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO public.tmo_validations (\n  nombre_agente,\n  limite_aplicado,\n  clasificacion,\n  observaciones_operativas,\n  plan_coaching_ia\n) VALUES (\n  'RESUMEN GENERAL AUDITORÍA',\n  {{ $('Clasificador por Reglas de Negocio').first().json.limite_aplicado }},\n  'VALIDADO',\n  'Auditoría completada para {{ $('Clasificador por Reglas de Negocio').first().json.total_evaluados }} agentes',\n  '{{ $json.message.content.replace(/'/g, \"''\") }}'\n);"
+      },
+      "id": "2b000002-0000-4000-8000-000000000007",
+      "name": "Supabase - Guardar tmo_validations",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1380, 260]
+    },
+    {
+      "parameters": {
+        "fromEmail": "andrescassiani46@gmail.com",
+        "toEmail": "={{ $('Clasificador por Reglas de Negocio').first().json.correo_alertas }}",
+        "subject": "=[RESUMEN APROBADOS TMO] {{ $('Clasificador por Reglas de Negocio').first().json.total_aprobados }} Agentes Dentro de Meta (<= {{ $('Clasificador por Reglas de Negocio').first().json.limite_aplicado }}s)",
+        "html": "=<h2>Resumen de Agentes Aprobados</h2><p>Agentes que cumplieron con la meta de TMO de <strong>{{ $('Clasificador por Reglas de Negocio').first().json.limite_aplicado }} segundos</strong>:</p><table border='1' cellpadding='6' cellspacing='0' style='border-collapse: collapse; font-family: sans-serif; font-size: 13px;'><tr style='background-color: #065F46; color: white;'><th>Agente</th><th>TMO Promedio</th><th>% del Límite</th><th>Resultado</th></tr>{{ $('Clasificador por Reglas de Negocio').first().json.lista_aprobados.map(a => `<tr><td>${a.agente}</td><td style='text-align: right;'><b>${a.tmo_promedio}s</b></td><td style='text-align: center;'>${a.porcentaje_limite}%</td><td style='color: green; font-weight: bold;'>${a.clasificacion}</td></tr>`).join('') }}</table>"
+      },
+      "id": "2b000002-0000-4000-8000-000000000008",
+      "name": "Correo 1 - Resumen Aprobados",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1640, 140]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $('Clasificador por Reglas de Negocio').first().json.total_requiere_revision }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "2b000002-0000-4000-8000-000000000009",
+      "name": "IF - ¿Hay Agentes en Revisión?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1640, 360]
+    },
+    {
+      "parameters": {
+        "fromEmail": "andrescassiani46@gmail.com",
+        "toEmail": "={{ $('Clasificador por Reglas de Negocio').first().json.correo_alertas }}",
+        "subject": "=[ALERTA OPERATIVA TMO] {{ $('Clasificador por Reglas de Negocio').first().json.total_requiere_revision }} Agentes Superaron el Límite de {{ $('Clasificador por Reglas de Negocio').first().json.limite_aplicado }}s",
+        "html": "=<h2 style='color: #B91C1C;'>Alerta: Agentes que Requieren Revisión de TMO</h2><p>Agentes que superaron el límite de <strong>{{ $('Clasificador por Reglas de Negocio').first().json.limite_aplicado }} segundos</strong>:</p><table border='1' cellpadding='6' cellspacing='0' style='border-collapse: collapse; font-family: sans-serif; font-size: 13px;'><tr style='background-color: #991B1B; color: white;'><th>Agente</th><th>TMO Promedio</th><th>Límite</th><th>% del Límite</th><th>Resultado</th></tr>{{ $('Clasificador por Reglas de Negocio').first().json.lista_requiere_revision.map(a => `<tr><td><b>${a.agente}</b></td><td style='text-align: right; color: red;'><b>${a.tmo_promedio}s</b></td><td style='text-align: center;'>${a.limite}s</td><td style='text-align: center; color: red;'><b>${a.porcentaje_limite}%</b></td><td style='color: red; font-weight: bold;'>${a.clasificacion}</td></tr>`).join('') }}</table><h3>Observaciones y Recomendaciones del Asistente IA</h3><pre style='background-color: #F8FAFC; padding: 12px; border-radius: 8px; border: 1px solid #E2E8F0; font-size: 12px;'>{{ JSON.stringify(JSON.parse($('Asistente IA - Revisión y Detección de Anomalías').first().json.message.content), null, 2) }}</pre>"
+      },
+      "id": "2b000002-0000-4000-8000-000000000010",
+      "name": "Correo 2 - Alerta Agentes en Revisión",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1900, 360]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $('Clasificador por Reglas de Negocio').first().json.total_error_datos }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "2b000002-0000-4000-8000-000000000011",
+      "name": "IF - ¿Hay Errores de Datos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1640, 560]
+    },
+    {
+      "parameters": {
+        "fromEmail": "andrescassiani46@gmail.com",
+        "toEmail": "={{ $('Clasificador por Reglas de Negocio').first().json.correo_alertas }}",
+        "subject": "=[ERROR DE DATOS TMO] Se Detectaron Inconsistencias en el Archivo",
+        "html": "=<h2 style='color: #D97706;'>Notificación de Inconsistencias en Registros de TMO</h2><p>Se identificaron filas con datos incompletos o formatos no numéricos:</p><table border='1' cellpadding='6' cellspacing='0' style='border-collapse: collapse; font-family: sans-serif; font-size: 13px;'><tr style='background-color: #B45309; color: white;'><th>Agente</th><th>Clasificación</th><th>Detalle Error</th></tr>{{ $('Clasificador por Reglas de Negocio').first().json.lista_error_datos.map(e => `<tr><td>${e.agente}</td><td style='color: orange; font-weight: bold;'>${e.clasificacion}</td><td>${e.detalle}</td></tr>`).join('') }}</table>"
+      },
+      "id": "2b000002-0000-4000-8000-000000000012",
+      "name": "Correo 3 - Alerta Errores de Datos",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1900, 560]
+    }
+  ],
+  "connections": {
+    "Email Trigger - Detectar Reporte Consolidado": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Leer Límite en app_settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Validación Manual": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Leer Límite en app_settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Leer Límite en app_settings": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items - Validar Agentes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items - Validar Agentes": {
+      "main": [
+        [
+          {
+            "node": "Clasificador por Reglas de Negocio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clasificador por Reglas de Negocio": {
+      "main": [
+        [
+          {
+            "node": "Asistente IA - Revisión y Detección de Anomalías",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Asistente IA - Revisión y Detección de Anomalías": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Guardar tmo_validations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Guardar tmo_validations": {
+      "main": [
+        [
+          {
+            "node": "Correo 1 - Resumen Aprobados",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF - ¿Hay Agentes en Revisión?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF - ¿Hay Errores de Datos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - ¿Hay Agentes en Revisión?": {
+      "main": [
+        [
+          {
+            "node": "Correo 2 - Alerta Agentes en Revisión",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - ¿Hay Errores de Datos?": {
+      "main": [
+        [
+          {
+            "node": "Correo 3 - Alerta Errores de Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

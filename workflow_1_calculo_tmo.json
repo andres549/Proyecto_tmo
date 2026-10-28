@@ -1,0 +1,234 @@
+{
+  "name": "Flujo 1 — Cálculo, Looping y Envío del Reporte TMO",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tmo-upload",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "1a000001-0000-4000-8000-000000000001",
+      "name": "Webhook - Carga Plataforma Web",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [160, 260]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT clave, valor_numerico, valor_texto FROM public.app_settings WHERE clave IN ('tmo_limite_segundos', 'correo_destinatario_defecto', 'modo_envio');"
+      },
+      "id": "1a000001-0000-4000-8000-000000000002",
+      "name": "Supabase - Leer app_settings",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [380, 260],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-postgres-cred",
+          "name": "Supabase PostgreSQL Connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer archivo, generar Hash SHA-256 y validar duplicados\nconst crypto = require('crypto');\n\nconst items = $input.all();\nconst configRows = $('Supabase - Leer app_settings').all();\n\nlet limite = 20.0;\nlet correoDefecto = 'andrescassiani46@gmail.com';\nlet modoEnvio = 'AUTOMATICO';\n\nfor (const r of configRows) {\n  if (r.json.clave === 'tmo_limite_segundos') limite = parseFloat(r.json.valor_numerico);\n  if (r.json.clave === 'correo_destinatario_defecto') correoDefecto = r.json.valor_texto;\n  if (r.json.clave === 'modo_envio') modoEnvio = r.json.valor_texto;\n}\n\nconst inputData = items[0].json;\nconst binaryData = items[0].binary;\n\nlet fileContent = '';\nif (binaryData && binaryData.data) {\n  fileContent = binaryData.data.data || '';\n} else {\n  fileContent = JSON.stringify(inputData);\n}\n\nconst hashSha256 = crypto.createHash('sha256').update(fileContent).digest('hex');\n\nreturn [{\n  json: {\n    hash_sha256: hashSha256,\n    nombre_archivo: (binaryData && binaryData.data && binaryData.data.fileName) || 'gestiones_tmo.xlsx',\n    correo_destinatario: inputData.correo_destinatario || correoDefecto,\n    limite_tmo: limite,\n    modo_envio: modoEnvio,\n    registros_crudos: inputData.agentes || inputData.operaciones || []\n  },\n  binary: binaryData\n}];"
+      },
+      "id": "1a000001-0000-4000-8000-000000000003",
+      "name": "Validar Archivo & Hash SHA-256",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [600, 260]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, estado FROM public.tmo_runs WHERE hash_sha256 = '{{ $json.hash_sha256 }}' LIMIT 1;"
+      },
+      "id": "1a000001-0000-4000-8000-000000000004",
+      "name": "Supabase - Verificar tmo_runs Hash",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [820, 260]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.estado }}",
+              "value2": "EXITOSO"
+            }
+          ]
+        }
+      },
+      "id": "1a000001-0000-4000-8000-000000000005",
+      "name": "IF - ¿Ya fue procesado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1040, 260]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "1a000001-0000-4000-8000-000000000006",
+      "name": "Loop Over Items - Agentes",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1280, 280]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Código de procesamiento en lote / Looping\n// Fórmula: TMO promedio = Suma / Gestiones válidas\n// Porcentaje del límite = (TMO promedio / Límite) * 100\n\nconst prev = $('Validar Archivo & Hash SHA-256').first().json;\nconst threshold = prev.limite_tmo || 20.0;\nconst rawRows = prev.registros_crudos;\n\nconst agentMap = {};\nlet totalFilas = 0;\nlet validas = 0;\nlet invalidas = 0;\n\nfor (const r of rawRows) {\n  totalFilas++;\n  const name = (r.operador || r.agente || r.nombre || '').toString().trim();\n  const tmo = parseFloat(r.tmo || r.tiempo_gestion_segundos || r.tiempo);\n\n  if (!name || isNaN(tmo) || tmo < 0) {\n    invalidas++;\n    continue;\n  }\n  validas++;\n  if (!agentMap[name]) {\n    agentMap[name] = { name, count: 0, sum: 0 };\n  }\n  agentMap[name].count += (r.operaciones || 1);\n  agentMap[name].sum += (tmo * (r.operaciones || 1));\n}\n\nconst summaries = [];\nlet sumaTotalTmo = 0;\nlet aprobados = 0;\nlet revision = 0;\n\nfor (const [name, d] of Object.entries(agentMap)) {\n  const tmoPromedio = Math.round((d.sum / d.count) * 100) / 100;\n  const pctLimite = Math.round((tmoPromedio / threshold) * 10000) / 100;\n  const estado = tmoPromedio <= threshold ? 'APROBADO' : 'REQUIERE REVISIÓN';\n\n  if (estado === 'APROBADO') aprobados++; else revision++;\n  sumaTotalTmo += tmoPromedio;\n\n  summaries.push({\n    nombre_agente: name,\n    gestiones_validas: d.count,\n    suma_tiempos_segundos: Math.round(d.sum * 100) / 100,\n    tmo_promedio_segundos: tmoPromedio,\n    limite_segundos: threshold,\n    porcentaje_frente_al_limite: pctLimite,\n    clasificacion: estado\n  });\n}\n\nsummaries.sort((a, b) => b.tmo_promedio_segundos - a.tmo_promedio_segundos);\nconst totalAgentes = summaries.length;\nconst tmoGlobal = totalAgentes > 0 ? Math.round((sumaTotalTmo / totalAgentes) * 100) / 100 : 0;\nconst tasaAprobacion = totalAgentes > 0 ? Math.round((aprobados / totalAgentes) * 10000) / 100 : 0;\n\nreturn [{\n  json: {\n    run_meta: {\n      hash_sha256: prev.hash_sha256,\n      nombre_archivo: prev.nombre_archivo,\n      total_filas_leidas: totalFilas,\n      total_filas_validas: validas,\n      total_filas_invalidas: invalidas,\n      total_agentes: totalAgentes,\n      tmo_global_promedio: tmoGlobal,\n      limite_aplicado: threshold,\n      agentes_aprobados: aprobados,\n      agentes_requiere_revision: revision,\n      tasa_aprobacion_pct: tasaAprobacion,\n      destinatario_correo: prev.correo_destinatario\n    },\n    tmo_summaries: summaries\n  }\n}];"
+      },
+      "id": "1a000001-0000-4000-8000-000000000007",
+      "name": "Cálculo TMO & Porcentaje del Límite",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1500, 280]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH nueva_run AS (\n  INSERT INTO public.tmo_runs (\n    hash_sha256,\n    nombre_archivo,\n    origen,\n    total_filas_leidas,\n    total_filas_validas,\n    total_filas_invalidas,\n    total_agentes_evaluados,\n    tmo_global_promedio,\n    limite_aplicado,\n    agentes_aprobados,\n    agentes_requiere_revision,\n    estado,\n    destinatario_correo,\n    estado_envio_correo\n  ) VALUES (\n    '{{ $json.run_meta.hash_sha256 }}',\n    '{{ $json.run_meta.nombre_archivo }}',\n    'WEB_PAGE',\n    {{ $json.run_meta.total_filas_leidas }},\n    {{ $json.run_meta.total_filas_validas }},\n    {{ $json.run_meta.total_filas_invalidas }},\n    {{ $json.run_meta.total_agentes }},\n    {{ $json.run_meta.tmo_global_promedio }},\n    {{ $json.run_meta.limite_aplicado }},\n    {{ $json.run_meta.agentes_aprobados }},\n    {{ $json.run_meta.agentes_requiere_revision }},\n    'EXITOSO',\n    '{{ $json.run_meta.destinatario_correo }}',\n    'ENVIADO'\n  ) RETURNING id\n)\nSELECT id FROM nueva_run;"
+      },
+      "id": "1a000001-0000-4000-8000-000000000008",
+      "name": "Supabase - Guardar tmo_runs",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1740, 280]
+    },
+    {
+      "parameters": {
+        "fromEmail": "andrescassiani46@gmail.com",
+        "toEmail": "={{ $('Cálculo TMO & Porcentaje del Límite').first().json.run_meta.destinatario_correo }}",
+        "subject": "=[REPORTE TMO CONSOLIDADO] Resultados del Equipo - TMO {{ $('Cálculo TMO & Porcentaje del Límite').first().json.run_meta.tmo_global_promedio }}s",
+        "html": "=<h2>Reporte Oficial de TMO Consolidado (4 Hojas)</h2><p>Se ha procesado exitosamente el cálculo de Tiempo Medio Operativo para <strong>{{ $('Cálculo TMO & Porcentaje del Límite').first().json.run_meta.total_agentes }} agentes</strong>.</p><ul><li><strong>TMO Global:</strong> {{ $('Cálculo TMO & Porcentaje del Límite').first().json.run_meta.tmo_global_promedio }}s</li><li><strong>Límite Aplicado:</strong> {{ $('Cálculo TMO & Porcentaje del Límite').first().json.run_meta.limite_aplicado }}s</li><li><strong>Tasa de Aprobación:</strong> {{ $('Cálculo TMO & Porcentaje del Límite').first().json.run_meta.tasa_aprobacion_pct }}%</li><li><strong>Aprobados:</strong> {{ $('Cálculo TMO & Porcentaje del Límite').first().json.run_meta.agentes_aprobados }} | <strong>Requieren Revisión:</strong> {{ $('Cálculo TMO & Porcentaje del Límite').first().json.run_meta.agentes_requiere_revision }}</li></ul><p>El Excel adjunto contiene las 4 hojas reglamentarias: <em>Resumen TMO, Datos originales, Dashboard y Validación</em>.</p>",
+        "options": {
+          "attachments": "data"
+        }
+      },
+      "id": "1a000001-0000-4000-8000-000000000009",
+      "name": "Enviar Correo con Excel Consolidado",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1980, 280]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO public.email_logs (\n  tipo_notificacion,\n  destinatario,\n  asunto,\n  estado_envio\n) VALUES (\n  'REPORTE_CONSOLIDADO',\n  '{{ $('Cálculo TMO & Porcentaje del Límite').first().json.run_meta.destinatario_correo }}',\n  '[REPORTE TMO CONSOLIDADO] Resultados del Equipo',\n  'ENVIADO'\n);"
+      },
+      "id": "1a000001-0000-4000-8000-000000000010",
+      "name": "Supabase - Guardar email_logs",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2220, 280]
+    }
+  ],
+  "connections": {
+    "Webhook - Carga Plataforma Web": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Leer app_settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Leer app_settings": {
+      "main": [
+        [
+          {
+            "node": "Validar Archivo & Hash SHA-256",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar Archivo & Hash SHA-256": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Verificar tmo_runs Hash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Verificar tmo_runs Hash": {
+      "main": [
+        [
+          {
+            "node": "IF - ¿Ya fue procesado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - ¿Ya fue procesado?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Loop Over Items - Agentes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items - Agentes": {
+      "main": [
+        [
+          {
+            "node": "Cálculo TMO & Porcentaje del Límite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cálculo TMO & Porcentaje del Límite": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Guardar tmo_runs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Guardar tmo_runs": {
+      "main": [
+        [
+          {
+            "node": "Enviar Correo con Excel Consolidado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Correo con Excel Consolidado": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Guardar email_logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
