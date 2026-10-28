@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presentación Ejecutiva: TMO Control Enterprise Suite</title>
+    <title>Presentación Ejecutiva de Alto Impacto: TMO Control Enterprise Suite</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome 6.5 -->
@@ -11,564 +11,820 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --brand-blue: #3B82F6;
+            --brand-purple: #8B5CF6;
+            --brand-emerald: #10B981;
+            --brand-rose: #F43F5E;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-font-smoothing: antialiased;
+            background: #060913;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 60%);
+            background-attachment: fixed;
         }
+
         h1, h2, h3, h4, .font-heading {
             font-family: 'Outfit', sans-serif;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.025em;
         }
+
         .font-mono {
             font-family: 'JetBrains Mono', monospace;
         }
-        .slide-container {
+
+        /* Glassmorphism Ultra Premium */
+        .glass-deck {
+            background: rgba(13, 19, 36, 0.75);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 30px 60px -12px rgba(0, 0, 0, 0.7),
+                0 18px 36px -18px rgba(0, 0, 0, 0.8),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .glass-subcard {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-subcard:hover {
+            transform: translateY(-2px);
+            border-color: rgba(96, 165, 250, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Transición de diapositivas tipo Keynote */
+        .slide-wrapper {
             display: none;
             opacity: 0;
-            transform: scale(0.98);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: scale(0.96) translateY(12px);
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .slide-container.active {
+
+        .slide-wrapper.active {
             display: flex;
             opacity: 1;
-            transform: scale(1);
+            transform: scale(1) translateY(0);
         }
+
+        /* Ecualizador animado en diapositiva */
+        .mini-audio-bar {
+            width: 3px;
+            background: #38BDF8;
+            border-radius: 999px;
+            animation: bounceWave 1.2s infinite ease-in-out;
+        }
+        .mini-audio-bar:nth-child(1) { height: 8px; animation-delay: 0.1s; }
+        .mini-audio-bar:nth-child(2) { height: 18px; animation-delay: 0.3s; background: #60A5FA; }
+        .mini-audio-bar:nth-child(3) { height: 26px; animation-delay: 0.2s; background: #818CF8; }
+        .mini-audio-bar:nth-child(4) { height: 14px; animation-delay: 0.4s; background: #A78BFA; }
+        .mini-audio-bar:nth-child(5) { height: 22px; animation-delay: 0.15s; background: #38BDF8; }
+
+        @keyframes bounceWave {
+            0%, 100% { transform: scaleY(0.4); }
+            50% { transform: scaleY(1.1); }
+        }
+
+        /* Gradientes de texto */
+        .text-gradient-blue {
+            background: linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-emerald {
+            background: linear-gradient(135deg, #34D399 0%, #6EE7B7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-rose {
+            background: linear-gradient(135deg, #FB7185 0%, #FDA4AF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Impresión a PDF */
         @media print {
-            body { background: white !important; color: black !important; }
+            body { background: #0F172A !important; color: white !important; }
             .no-print { display: none !important; }
-            .slide-container {
+            .slide-wrapper {
                 display: flex !important;
                 opacity: 1 !important;
                 transform: none !important;
                 page-break-after: always;
                 min-height: 100vh;
-                box-shadow: none !important;
-                border: 1px solid #e2e8f0 !important;
                 margin-bottom: 20px;
             }
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between select-none overflow-x-hidden">
+<body class="text-slate-100 min-h-screen flex flex-col justify-between select-none">
 
-    <!-- BARRA SUPERIOR DE CONTROL -->
-    <header class="no-print h-14 border-b border-slate-800/80 px-6 flex items-center justify-between bg-slate-900/60 backdrop-blur-md sticky top-0 z-30">
-        <div class="flex items-center space-x-3">
-            <a href="/" class="flex items-center space-x-2 text-xs font-semibold text-slate-400 hover:text-white transition">
+    <!-- 1. BARRA DE CONTROL SUPERIOR -->
+    <header class="no-print h-16 border-b border-white/10 px-6 flex items-center justify-between bg-slate-950/70 backdrop-blur-xl sticky top-0 z-40">
+        <div class="flex items-center space-x-3.5">
+            <a href="/" class="flex items-center space-x-2 text-xs font-bold text-slate-400 hover:text-white px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span>Volver al Dashboard</span>
             </a>
             <span class="text-slate-700">|</span>
             <div class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
-                <span class="font-bold text-xs text-white">Presentación Ejecutiva • TMO Control</span>
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-xs font-black shadow-md shadow-blue-500/30">
+                    <i class="fa-solid fa-headset text-[11px]"></i>
+                </div>
+                <div>
+                    <span class="font-extrabold text-xs text-white font-heading">TMO Control</span>
+                    <span class="text-[10px] text-blue-400 font-semibold ml-1">Keynote Deck</span>
+                </div>
             </div>
         </div>
 
-        <!-- Indicador de Diapositiva y Herramientas -->
-        <div class="flex items-center space-x-4">
-            <div class="text-xs font-mono font-bold text-slate-400 bg-slate-800/80 px-3 py-1 rounded-full border border-slate-700/60">
-                <span id="slideCounterCurrent" class="text-blue-400">1</span> / <span id="slideCounterTotal">10</span>
+        <!-- Indicador de Diapositiva, Autoplay y Herramientas -->
+        <div class="flex items-center space-x-3">
+            <!-- Selector de Diapositiva Rápido -->
+            <div class="hidden sm:flex items-center space-x-1 bg-black/40 border border-white/10 rounded-xl p-1" id="thumbDotsContainer">
+                <!-- Generado por JS -->
             </div>
 
-            <!-- Botón Modo Presentación Pantalla Completa -->
-            <button type="button" id="btnFullscreen" title="Pantalla Completa (F)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center text-xs transition">
+            <!-- Contador Numérico -->
+            <div class="text-xs font-mono font-bold text-slate-300 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10">
+                <span id="slideCounterCurrent" class="text-blue-400 font-black">1</span> <span class="text-slate-500">/</span> <span id="slideCounterTotal">10</span>
+            </div>
+
+            <!-- Botón Sonido -->
+            <button type="button" id="btnToggleAudio" title="Alternar Sonido" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center text-xs transition">
+                <i class="fa-solid fa-volume-high" id="audioIcon"></i>
+            </button>
+
+            <!-- Botón Pantalla Completa -->
+            <button type="button" id="btnFullscreen" title="Pantalla Completa (F)" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center text-xs transition">
                 <i class="fa-solid fa-expand"></i>
             </button>
 
-            <!-- Botón Imprimir a PDF -->
-            <button type="button" onclick="window.print()" title="Imprimir / Guardar como PDF" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-semibold transition flex items-center space-x-1.5">
-                <i class="fa-solid fa-file-pdf text-rose-400"></i>
+            <!-- Botón PDF -->
+            <button type="button" onclick="window.print()" title="Imprimir / Exportar a PDF" class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-md shadow-blue-500/20">
+                <i class="fa-solid fa-file-pdf text-amber-300"></i>
                 <span>PDF</span>
             </button>
         </div>
     </header>
 
-    <!-- CONTENEDOR PRINCIPAL DE DIAPOSITIVAS (ASPECT RATIO 16:9 ELEGANTE) -->
-    <main class="flex-1 flex items-center justify-center p-4 md:p-8">
-        <div class="w-full max-w-5xl aspect-auto md:aspect-[16/9] relative min-h-[580px] flex">
+    <!-- 2. LIENZO PRINCIPAL DE PRESENTACIÓN (16:9 CARD) -->
+    <main class="flex-1 flex items-center justify-center p-3 md:p-6 lg:p-8">
+        <div class="w-full max-w-6xl aspect-auto md:aspect-[16/9] min-h-[580px] flex">
 
             <!-- =========================================================================
-                 DIAPOSITIVA 1: PORTADA
+                 DIAPOSITIVA 1: PORTADA IMPACTANTE
                  ========================================================================= -->
-            <div class="slide-container active w-full flex-col justify-between p-8 md:p-14 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 rounded-3xl border border-indigo-500/30 shadow-2xl relative overflow-hidden">
-                <div class="absolute -right-16 -bottom-16 w-80 h-80 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
-                <div class="absolute -left-16 -top-16 w-80 h-80 rounded-full bg-purple-500/10 blur-3xl pointer-events-none"></div>
+            <div class="slide-wrapper active w-full flex-col justify-between p-8 md:p-14 rounded-3xl glass-deck relative overflow-hidden">
+                <!-- Acentos lumínicos de fondo -->
+                <div class="absolute -right-20 -bottom-20 w-96 h-96 rounded-full bg-blue-600/20 blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-20 -top-20 w-96 h-96 rounded-full bg-purple-600/20 blur-3xl pointer-events-none"></div>
 
-                <div class="flex justify-between items-start">
+                <!-- Cabecera de la diapositiva -->
+                <div class="flex justify-between items-center relative z-10">
                     <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-xl font-black shadow-lg shadow-blue-500/30">
-                            <i class="fa-solid fa-headset"></i>
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-500 to-cyan-400 text-slate-950 flex items-center justify-center text-xl font-black shadow-lg shadow-cyan-500/25">
+                            <i class="fa-solid fa-bolt"></i>
                         </div>
                         <div>
-                            <span class="text-xs font-bold uppercase tracking-widest text-blue-400">PROYECTO FINAL BPO & IA</span>
-                            <div class="text-xs text-slate-400 font-medium">Automatización de Operaciones</div>
+                            <span class="text-xs font-black uppercase tracking-widest text-cyan-400">DEFENSA TÉCNICA DE PROYECTO</span>
+                            <div class="text-xs text-slate-400 font-medium">Automatización de Operaciones BPO & Contact Center</div>
                         </div>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-ping"></span>
-                        n8n • Supabase • OpenAI
-                    </span>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-ping"></span>
+                            Sistema en Producción Local
+                        </span>
+                    </div>
                 </div>
 
-                <div class="my-auto space-y-4 max-w-3xl">
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
-                        TMO Control <span class="bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">Enterprise Suite</span>
+                <!-- Titular Hero -->
+                <div class="my-auto space-y-4 max-w-3xl relative z-10">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-xs font-mono text-slate-300">
+                        <i class="fa-solid fa-microchip text-blue-400"></i>
+                        <span>Arquitectura SPA • n8n • Supabase Postgres • Copilot IA (NLU)</span>
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tight text-white leading-tight font-heading">
+                        TMO Control <br>
+                        <span class="text-gradient-blue">Enterprise Suite</span>
                     </h1>
-                    <p class="text-base md:text-lg text-slate-300 leading-relaxed font-light">
-                        Sistema integral para medición en tiempo real, cálculo de TMO, validación paralela con Asistente de IA y despacho automatizado de reportes multicanal.
+                    <p class="text-sm md:text-lg text-slate-300 leading-relaxed font-light">
+                        Plataforma integral para recepción, medición en tiempo real con ecualizador, deduplicación criptográfica SHA-256, consolidación en Excel de 4 hojas con gráficos nativos y auditoría paralela con IA.
                     </p>
                 </div>
 
-                <div class="pt-6 border-t border-slate-800/80 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 text-xs text-slate-400">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-user-tie text-blue-400"></i>
-                        <span><strong>Expositor:</strong> Andrés Morales • Equipo de Operaciones & Automatización BPO</span>
+                <!-- Pie de portada: Datos del expositor y Tech Stack -->
+                <div class="pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10 text-xs text-slate-400">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold font-mono">
+                            AM
+                        </div>
+                        <div>
+                            <div class="font-bold text-white text-sm">Andrés Morales</div>
+                            <div class="text-[11px] text-slate-400">Ingeniería de Automatización & Operaciones BPO</div>
+                        </div>
                     </div>
-                    <div class="flex items-center space-x-3 font-mono text-[11px] text-slate-500">
-                        <span>v3.0 SPA</span>
-                        <span>•</span>
-                        <span>Octubre 2026</span>
+                    
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300"><i class="fa-brands fa-node-js text-emerald-400 mr-1"></i> Node.js v24</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300"><i class="fa-solid fa-database text-sky-400 mr-1"></i> Supabase</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300"><i class="fa-solid fa-brain text-purple-400 mr-1"></i> OpenAI / Claude</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300"><i class="fa-brands fa-github text-white mr-1"></i> GitHub Activo</span>
                     </div>
                 </div>
             </div>
 
             <!-- =========================================================================
-                 DIAPOSITIVA 2: LA PROBLEMÁTICA OPERATIVA
+                 DIAPOSITIVA 2: LA PROBLEMÁTICA OPERATIVA (ANTES VS DESPUÉS)
                  ========================================================================= -->
-            <div class="slide-container w-full flex-col justify-between p-8 md:p-14 bg-gradient-to-br from-slate-900 to-slate-950 rounded-3xl border border-slate-800 shadow-2xl">
+            <div class="slide-wrapper w-full flex-col justify-between p-8 md:p-14 rounded-3xl glass-deck">
                 <div>
                     <div class="flex items-center space-x-2 text-rose-400 text-xs font-bold uppercase tracking-wider mb-2">
                         <i class="fa-solid fa-triangle-exclamation"></i>
-                        <span>Diagnóstico del Contexto</span>
+                        <span>El Diagnóstico Operativo</span>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-white">Los Desafíos del Proceso Manual en Contact Centers</h2>
-                    <p class="text-xs text-slate-400 mt-1">Cómo la falta de automatización afecta la toma de decisiones operativas</p>
+                    <h2 class="text-3xl md:text-5xl font-black text-white font-heading">El Cuello de Botella del Proceso Manual</h2>
+                    <p class="text-xs md:text-sm text-slate-400 mt-1">Cómo la consolidación tradicional en hojas de cálculo asfixia la rentabilidad</p>
                 </div>
 
+                <!-- Matriz de 4 Puntos de Dolor Críticos -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-auto">
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-rose-500/20 space-y-2">
-                        <div class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-sm font-bold">
-                            <i class="fa-solid fa-hourglass-half"></i>
+                    <div class="p-5 rounded-2xl glass-subcard border-l-4 border-l-rose-500 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-white text-sm flex items-center">
+                                <i class="fa-solid fa-hourglass-half text-rose-400 mr-2"></i> 45 a 90 minutos perdidos por turno
+                            </span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300">Ineficiencia</span>
                         </div>
-                        <h3 class="font-bold text-white text-sm">45 a 90 minutos perdidos por turno</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Los analistas de operaciones deben recibir archivos dispersos por correo, abrirlos uno a uno y aplicar fórmulas manuales en Excel propensas a errores.
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Los analistas esperan correos dispersos, abren archivos pesados y aplican fórmulas manuales, perdiendo el 80% de su tiempo en tareas mecánicas de digitación.
                         </p>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-amber-500/20 space-y-2">
-                        <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm font-bold">
-                            <i class="fa-solid fa-copy"></i>
+                    <div class="p-5 rounded-2xl glass-subcard border-l-4 border-l-amber-500 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-white text-sm flex items-center">
+                                <i class="fa-solid fa-clone text-amber-400 mr-2"></i> Archivos duplicados y métricas sesgadas
+                            </span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">Riesgo Alto</span>
                         </div>
-                        <h3 class="font-bold text-white text-sm">Archivos duplicados y métricas sesgadas</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Sin un control criptográfico (hashes SHA-256), los mismos archivos se procesan dos o más veces, alterando el pago de bonificaciones y KPIs de calidad.
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Sin control de hashes criptográficos, los mismos reportes se cargan múltiples veces, distorsionando bonificaciones y la evaluación del personal.
                         </p>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-purple-500/20 space-y-2">
-                        <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-sm font-bold">
-                            <i class="fa-solid fa-chart-line"></i>
+                    <div class="p-5 rounded-2xl glass-subcard border-l-4 border-l-purple-500 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-white text-sm flex items-center">
+                                <i class="fa-solid fa-square-root-variable text-purple-400 mr-2"></i> Fórmulas frías sin retroalimentación
+                            </span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300">Sin Inteligencia</span>
                         </div>
-                        <h3 class="font-bold text-white text-sm">Fórmulas frías sin retroalimentación</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            El Excel tradicional solo devuelve números, pero no explica por qué un operador se desvió ni formula planes de coaching para el supervisor.
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            El Excel tradicional arroja números pero no analiza causas: ¿por qué el asesor superó el umbral? ¿es por Hold prolongado o por demoras de tipificación en el CRM?
                         </p>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-blue-500/20 space-y-2">
-                        <div class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-sm font-bold">
-                            <i class="fa-solid fa-bell-slash"></i>
+                    <div class="p-5 rounded-2xl glass-subcard border-l-4 border-l-blue-500 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-white text-sm flex items-center">
+                                <i class="fa-solid fa-bell-slash text-blue-400 mr-2"></i> Notificación tardía a los trabajadores
+                            </span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300">SLA en Peligro</span>
                         </div>
-                        <h3 class="font-bold text-white text-sm">Falta de notificación inmediata al trabajador</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Los asesores en riesgo se enteran de sus desvíos días después en auditorías semanales, cuando el impacto en el SLA del cliente ya es irreversible.
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Los asesores en desvío no reciben alertas en el momento oportuno, enterándose días después en reuniones cuando ya se han violado los acuerdos de servicio con el cliente.
                         </p>
                     </div>
                 </div>
 
-                <div class="pt-4 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
-                    <span>Impacto Operativo: Retención de clientes en riesgo y penalizaciones contractuales</span>
-                    <span class="text-rose-400 font-semibold"><i class="fa-solid fa-circle-xmark mr-1"></i> Proceso Manual Insostenible</span>
+                <div class="pt-4 border-t border-white/10 flex justify-between items-center text-xs text-slate-400">
+                    <span>Consecuencia: Penalizaciones en SLA del cliente y sobrecostos operativos</span>
+                    <span class="text-rose-400 font-bold font-mono">Estado: Resuelto con Automatización</span>
                 </div>
             </div>
 
             <!-- =========================================================================
-                 DIAPOSITIVA 3: OBJETIVO Y SOLUCIÓN
+                 DIAPOSITIVA 3: LA SOLUCIÓN Y PROPUESTA DE VALOR
                  ========================================================================= -->
-            <div class="slide-container w-full flex-col justify-between p-8 md:p-14 bg-gradient-to-br from-slate-900 to-slate-950 rounded-3xl border border-slate-800 shadow-2xl">
+            <div class="slide-wrapper w-full flex-col justify-between p-8 md:p-14 rounded-3xl glass-deck">
                 <div>
                     <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
-                        <i class="fa-solid fa-bullseye"></i>
-                        <span>Propuesta de Valor</span>
+                        <i class="fa-solid fa-award"></i>
+                        <span>La Transformación Digital</span>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-white">Objetivo del Proyecto & Solución Integral</h2>
-                    <p class="text-xs text-slate-400 mt-1">Transformación digital extremo a extremo del ciclo de vida del TMO</p>
+                    <h2 class="text-3xl md:text-5xl font-black text-white font-heading">Solución Integral Extremo a Extremo</h2>
+                    <p class="text-xs md:text-sm text-slate-400 mt-1">Automatización total del ciclo de vida del dato desde la llamada hasta el coaching</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5 my-auto">
-                    <div class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-base font-bold">
-                            <i class="fa-solid fa-robot"></i>
+                    <!-- Tarjeta 1 -->
+                    <div class="p-6 rounded-2xl glass-subcard space-y-3 relative overflow-hidden">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl font-bold border border-emerald-500/20">
+                            <i class="fa-solid fa-bolt-lightning"></i>
                         </div>
-                        <h3 class="font-bold text-white text-base">Automatización 100%</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Ingesta automática por correo IMAP o carga web masiva, deduplicación SHA-256 y cálculo en menos de 3.2 segundos sin abrir hojas de cálculo.
+                        <h3 class="font-bold text-white text-base">Automatización en 3.2s</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Ingesta instantánea por webhook o correo IMAP. Eliminación total de tareas mecánicas manuales y reducción del 96% en tiempo de turno.
                         </p>
+                        <div class="pt-2 text-[11px] font-mono text-emerald-400 font-semibold">
+                            &bull; Deduplicación SHA-256
+                        </div>
                     </div>
 
-                    <div class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-base font-bold">
+                    <!-- Tarjeta 2 -->
+                    <div class="p-6 rounded-2xl glass-subcard space-y-3 relative overflow-hidden">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl font-bold border border-blue-500/20">
                             <i class="fa-solid fa-file-excel"></i>
                         </div>
                         <h3 class="font-bold text-white text-base">Excel Oficial con Gráficos</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Generación programática del libro Excel con 4 hojas, formateo condicional, totales del equipo y gráficos nativos de barras y donas.
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Generación programática de 4 hojas: Consolidado TMO, Datos Crudos, Dashboard con Barras/Donas y Pestaña de Validación IA.
                         </p>
+                        <div class="pt-2 text-[11px] font-mono text-blue-400 font-semibold">
+                            &bull; 100% Nativo en ExcelJS
+                        </div>
                     </div>
 
-                    <div class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-                        <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-base font-bold">
+                    <!-- Tarjeta 3 -->
+                    <div class="p-6 rounded-2xl glass-subcard space-y-3 relative overflow-hidden">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl font-bold border border-purple-500/20">
                             <i class="fa-solid fa-brain"></i>
                         </div>
-                        <h3 class="font-bold text-white text-base">Auditoría & Coaching IA</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Desacoplamiento mediante un flujo paralelo en n8n: evaluación estricta de umbrales dinámicos y generación de planes tácticos de coaching.
+                        <h3 class="font-bold text-white text-base">Copilot IA & Alertas Reales</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Auditoría paralela independiente en n8n: detecta trabajadores con TMO &gt; 20s y les despacha su plan de coaching a su bandeja de correo.
                         </p>
+                        <div class="pt-2 text-[11px] font-mono text-purple-400 font-semibold">
+                            &bull; Despacho SMTP Integrado
+                        </div>
                     </div>
                 </div>
 
-                <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex justify-between items-center text-xs">
-                    <span class="text-emerald-300 font-semibold"><i class="fa-solid fa-check-double mr-1.5"></i> Meta de la Operación: Mantener el TMO del equipo en &le; 20.00 segundos</span>
-                    <span class="text-slate-400">Dataset validado con 85 gestiones de prueba reales</span>
+                <div class="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 to-blue-950/40 border border-emerald-500/30 flex justify-between items-center text-xs">
+                    <span class="text-emerald-300 font-bold flex items-center">
+                        <i class="fa-solid fa-bullseye text-sm mr-2 text-emerald-400"></i>
+                        Meta Operativa Estándar: TMO promedio &le; 20.00 segundos por asesor
+                    </span>
+                    <span class="text-slate-400 font-mono">Dataset validado: 85 filas</span>
                 </div>
             </div>
 
             <!-- =========================================================================
-                 DIAPOSITIVA 4: ARQUITECTURA GENERAL
+                 DIAPOSITIVA 4: ARQUITECTURA TÉCNICA Y FLUJO DE DATOS
                  ========================================================================= -->
-            <div class="slide-container w-full flex-col justify-between p-8 md:p-14 bg-gradient-to-br from-slate-900 to-slate-950 rounded-3xl border border-slate-800 shadow-2xl">
+            <div class="slide-wrapper w-full flex-col justify-between p-8 md:p-14 rounded-3xl glass-deck">
                 <div>
                     <div class="flex items-center space-x-2 text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">
                         <i class="fa-solid fa-diagram-project"></i>
-                        <span>Ecosistema Técnico</span>
+                        <span>Ingeniería de Software</span>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-white">Arquitectura Tecnológica Integrada</h2>
-                    <p class="text-xs text-slate-400 mt-1">Ecosistema modular, escalable y desacoplado por eventos</p>
+                    <h2 class="text-3xl md:text-5xl font-black text-white font-heading">Arquitectura Concurrente & Desacoplada</h2>
+                    <p class="text-xs md:text-sm text-slate-400 mt-1">Dos flujos paralelos en n8n conectados por eventos de correo e IMAP</p>
                 </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 my-auto">
-                    <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-                        <span class="text-[10px] font-bold uppercase text-blue-400">Frontend SPA</span>
-                        <div class="font-bold text-white text-sm">Portal Web 2.0</div>
-                        <p class="text-[11px] text-slate-400">Tailwind CSS, Chart.js, SheetJS, Web Audio API y 6 vistas únicas.</p>
+                <!-- Pipeline Visual de 5 Pasos -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 my-auto">
+                    <div class="p-4 rounded-xl glass-subcard text-center space-y-2 border-t-2 border-t-cyan-500">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 mx-auto flex items-center justify-center font-bold text-xs">1</div>
+                        <div class="font-bold text-white text-xs">Entrada Dual</div>
+                        <p class="text-[10px] text-slate-400 leading-tight">Medición en vivo por cronómetro o carga masiva Excel.</p>
                     </div>
 
-                    <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-                        <span class="text-[10px] font-bold uppercase text-rose-400">Orquestación</span>
-                        <div class="font-bold text-white text-sm">n8n Engine</div>
-                        <p class="text-[11px] text-slate-400">Workflows paralelos: Ingesta (Flujo 1) y Validación IA (Flujo 2).</p>
+                    <div class="p-4 rounded-xl glass-subcard text-center space-y-2 border-t-2 border-t-blue-500">
+                        <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 mx-auto flex items-center justify-center font-bold text-xs">2</div>
+                        <div class="font-bold text-white text-xs">Deduplicación</div>
+                        <p class="text-[10px] text-slate-400 leading-tight">Hash SHA-256 verificado en Supabase antes de procesar.</p>
                     </div>
 
-                    <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-                        <span class="text-[10px] font-bold uppercase text-emerald-400">Persistencia</span>
-                        <div class="font-bold text-white text-sm">Supabase Postgres</div>
-                        <p class="text-[11px] text-slate-400">Tablas de configuraciones, hashes SHA-256 y métricas por agente.</p>
+                    <div class="p-4 rounded-xl glass-subcard text-center space-y-2 border-t-2 border-t-indigo-500">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 mx-auto flex items-center justify-center font-bold text-xs">3</div>
+                        <div class="font-bold text-white text-xs">Flujo 1 n8n</div>
+                        <p class="text-[10px] text-slate-400 leading-tight">Looping, cálculo de TMO, generación Excel y envío a supervisor.</p>
                     </div>
 
-                    <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-                        <span class="text-[10px] font-bold uppercase text-purple-400">Inteligencia</span>
-                        <div class="font-bold text-white text-sm">Copilot NLU IA</div>
-                        <p class="text-[11px] text-slate-400">Diagnóstico táctico, alertas personalizadas y comprensión natural.</p>
+                    <div class="p-4 rounded-xl glass-subcard text-center space-y-2 border-t-2 border-t-purple-500">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 mx-auto flex items-center justify-center font-bold text-xs">4</div>
+                        <div class="font-bold text-white text-xs">Flujo 2 n8n</div>
+                        <p class="text-[10px] text-slate-400 leading-tight">Disparo por IMAP, clasificación &le;20s / &gt;20s y Copilot IA.</p>
+                    </div>
+
+                    <div class="p-4 rounded-xl glass-subcard text-center space-y-2 border-t-2 border-t-emerald-500">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center font-bold text-xs">5</div>
+                        <div class="font-bold text-white text-xs">Alertas SMTP</div>
+                        <p class="text-[10px] text-slate-400 leading-tight">Despacho de coaching a trabajadores con Excel adjunto.</p>
                     </div>
                 </div>
 
-                <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-xs text-slate-300 font-mono flex justify-between items-center">
-                    <span>Flujo de Datos: Llamada &rarr; Deduplicación &rarr; Cálculo TMO &rarr; Excel 4 Hojas &rarr; IMAP Trigger &rarr; Asistente IA &rarr; Alerta</span>
-                    <span class="text-blue-400 font-bold">100% Desacoplado</span>
+                <!-- Resumen de Tablas Supabase -->
+                <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-wrap justify-between items-center gap-2 text-xs text-slate-300 font-mono">
+                    <span class="text-blue-400 font-bold"><i class="fa-solid fa-database mr-1"></i> PostgreSQL Tablas:</span>
+                    <span class="bg-black/40 px-2 py-0.5 rounded border border-white/5">tmo_configuracion (20s)</span>
+                    <span class="bg-black/40 px-2 py-0.5 rounded border border-white/5">tmo_archivos_procesados (SHA)</span>
+                    <span class="bg-black/40 px-2 py-0.5 rounded border border-white/5">tmo_ejecuciones</span>
+                    <span class="bg-black/40 px-2 py-0.5 rounded border border-white/5">tmo_metricas_agente</span>
                 </div>
             </div>
 
             <!-- =========================================================================
-                 DIAPOSITIVA 5: PORTAL WEB SPA Y COCKPIT
+                 DIAPOSITIVA 5: PORTAL WEB SPA Y COCKPIT EN VIVO
                  ========================================================================= -->
-            <div class="slide-container w-full flex-col justify-between p-8 md:p-14 bg-gradient-to-br from-slate-900 to-slate-950 rounded-3xl border border-slate-800 shadow-2xl">
+            <div class="slide-wrapper w-full flex-col justify-between p-8 md:p-14 rounded-3xl glass-deck">
                 <div>
                     <div class="flex items-center space-x-2 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-2">
-                        <i class="fa-solid fa-laptop-code"></i>
-                        <span>Experiencia de Usuario (UI/UX)</span>
+                        <i class="fa-solid fa-desktop"></i>
+                        <span>Frontend de Nueva Generación</span>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-white">Portal Web SPA & Cockpit de Medición en Vivo</h2>
-                    <p class="text-xs text-slate-400 mt-1">Diseñado para la máxima ergonomía y concentración del supervisor y asesor</p>
+                    <h2 class="text-3xl md:text-5xl font-black text-white font-heading">Portal SPA de Vistas Únicas & Cockpit</h2>
+                    <p class="text-xs md:text-sm text-slate-400 mt-1">Cero solapamiento entre secciones y medición auditiva de alta precisión</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 my-auto">
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
-                        <div class="text-blue-400 text-lg"><i class="fa-solid fa-layer-group"></i></div>
-                        <h3 class="font-bold text-white text-sm">Vistas Únicas e Independientes</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Al hacer scroll, únicamente se visualiza la sección activa (Dashboard, Cronómetro, Operadores, IA, Historial o Alertas), eliminando el desorden.
-                        </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 my-auto">
+                    <!-- Simulador del Cockpit -->
+                    <div class="p-6 rounded-2xl bg-slate-950 border border-blue-500/30 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                                <span class="font-bold text-white text-xs">COCKPIT DE LLAMADA EN VIVO</span>
+                            </div>
+                            <span class="font-mono text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">Talk Activo</span>
+                        </div>
+
+                        <!-- Temporizador Digital con Ecualizador -->
+                        <div class="text-center py-4 bg-slate-900/80 rounded-xl border border-white/5">
+                            <div class="flex items-center justify-center space-x-1 mb-2">
+                                <div class="mini-audio-bar"></div>
+                                <div class="mini-audio-bar"></div>
+                                <div class="mini-audio-bar"></div>
+                                <div class="mini-audio-bar"></div>
+                                <div class="mini-audio-bar"></div>
+                            </div>
+                            <div class="font-mono text-5xl font-black text-white tracking-widest">
+                                00:18
+                            </div>
+                            <div class="text-[11px] text-blue-400 font-semibold mt-1">Registrando llamada para Laura Restrepo</div>
+                        </div>
+
+                        <!-- 3 Fases Reglamentarias -->
+                        <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                            <div class="p-2 rounded-lg bg-blue-500/10 border border-blue-500/40 text-blue-300 font-bold">Talk Time</div>
+                            <div class="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 font-semibold">Hold Time</div>
+                            <div class="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 font-semibold">Wrap-up</div>
+                        </div>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
-                        <div class="text-emerald-400 text-lg"><i class="fa-solid fa-wave-square"></i></div>
-                        <h3 class="font-bold text-white text-sm">Ecualizador & Audio Nativo</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Temporizador en vivo con ondas de audio animadas reactivas a la llamada y síntesis sonora con Web Audio API (Talk, Hold y Wrap-up).
-                        </p>
-                    </div>
-
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
-                        <div class="text-purple-400 text-lg"><i class="fa-solid fa-circle-half-stroke"></i></div>
-                        <h3 class="font-bold text-white text-sm">Modo Oscuro / Claro 2.0</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Paleta nocturna profunda con efectos de glassmorphism y modo claro con alto contraste, adaptable con un solo clic.
-                        </p>
+                    <!-- 6 Vistas Aisladas -->
+                    <div class="space-y-2.5">
+                        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
+                            Arquitectura de Vistas Aisladas (Scroll Independiente):
+                        </div>
+                        <div class="p-3 rounded-xl glass-subcard flex items-center justify-between text-xs">
+                            <span class="font-semibold text-white"><i class="fa-solid fa-chart-pie text-blue-400 mr-2"></i> 1. Dashboard General</span>
+                            <span class="text-slate-400 text-[11px]">KPIs, Barras, Donas & Canales</span>
+                        </div>
+                        <div class="p-3 rounded-xl glass-subcard flex items-center justify-between text-xs">
+                            <span class="font-semibold text-white"><i class="fa-solid fa-stopwatch text-cyan-400 mr-2"></i> 2. Cronómetro en Vivo</span>
+                            <span class="text-slate-400 text-[11px]">Cockpit y síntesis sonora</span>
+                        </div>
+                        <div class="p-3 rounded-xl glass-subcard flex items-center justify-between text-xs">
+                            <span class="font-semibold text-white"><i class="fa-solid fa-users text-emerald-400 mr-2"></i> 3. Operadores & Células</span>
+                            <span class="text-slate-400 text-[11px]">Células F1, F2, F3 y micro-barras</span>
+                        </div>
+                        <div class="p-3 rounded-xl glass-subcard flex items-center justify-between text-xs">
+                            <span class="font-semibold text-white"><i class="fa-solid fa-brain text-purple-400 mr-2"></i> 4. Copilot IA Conversacional</span>
+                            <span class="text-slate-400 text-[11px]">NLU en lenguaje natural</span>
+                        </div>
+                        <div class="p-3 rounded-xl glass-subcard flex items-center justify-between text-xs">
+                            <span class="font-semibold text-white"><i class="fa-solid fa-paper-plane text-rose-400 mr-2"></i> 5. Alertas & n8n</span>
+                            <span class="text-slate-400 text-[11px]">Despacho a trabajadores</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="pt-4 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400">
-                    <span>Servidor local integrado en Node.js puerto 3333</span>
-                    <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i> Notificaciones Toast no bloqueantes</span>
+                <div class="pt-4 border-t border-white/10 flex justify-between items-center text-xs text-slate-400">
+                    <span>Efectos de audio generados en tiempo real mediante Web Audio API</span>
+                    <span class="text-cyan-400 font-semibold"><i class="fa-solid fa-moon mr-1"></i> Modo Oscuro OLED & Modo Claro</span>
                 </div>
             </div>
 
             <!-- =========================================================================
                  DIAPOSITIVA 6: COPILOT IA CON NLU
                  ========================================================================= -->
-            <div class="slide-container w-full flex-col justify-between p-8 md:p-14 bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 rounded-3xl border border-purple-500/30 shadow-2xl">
+            <div class="slide-wrapper w-full flex-col justify-between p-8 md:p-14 rounded-3xl glass-deck">
                 <div>
-                    <div class="flex items-center space-x-2 text-purple-300 text-xs font-bold uppercase tracking-wider mb-2">
+                    <div class="flex items-center space-x-2 text-purple-400 text-xs font-bold uppercase tracking-wider mb-2">
                         <i class="fa-solid fa-brain"></i>
-                        <span>Inteligencia Artificial Operativa</span>
+                        <span>Procesamiento de Lenguaje Natural</span>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-white">Copilot de IA con Comprensión de Lenguaje Natural</h2>
-                    <p class="text-xs text-purple-200 mt-1">Interacción conversacional fluida sin comandos rígidos ni alucinaciones</p>
+                    <h2 class="text-3xl md:text-5xl font-black text-white font-heading">Copilot de IA para la Supervisión BPO</h2>
+                    <p class="text-xs md:text-sm text-slate-400 mt-1">Comprensión conversacional estricta, sin alucinaciones y con cálculos matemáticos en vivo</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 my-auto">
-                    <div class="p-5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 space-y-3">
-                        <h3 class="font-bold text-white text-sm flex items-center">
-                            <i class="fa-solid fa-comments text-purple-400 mr-2"></i> Consultas en Español Cotidiano
-                        </h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            El supervisor puede formular preguntas abiertas:
-                        </p>
-                        <div class="text-xs space-y-1.5 text-purple-200 font-mono bg-black/30 p-3 rounded-xl">
-                            <div>&bull; "¿Cómo le fue a Andrés hoy?"</div>
-                            <div>&bull; "¿Quiénes tuvieron bajo desempeño?"</div>
-                            <div>&bull; "¿Por qué el soporte técnico demora tanto?"</div>
-                            <div>&bull; "¿Cuál fue el operador más veloz?"</div>
+                    <!-- Simulador de Chat NLU -->
+                    <div class="p-5 rounded-2xl bg-black/40 border border-purple-500/30 space-y-3 font-sans">
+                        <div class="flex items-center justify-between pb-2 border-b border-white/10 text-xs font-bold text-purple-300">
+                            <span><i class="fa-solid fa-robot mr-1.5"></i> Chat de Operaciones BPO</span>
+                            <span class="text-[10px] bg-purple-500/20 px-2 py-0.5 rounded text-purple-200">En línea</span>
+                        </div>
+
+                        <!-- Mensaje Usuario -->
+                        <div class="bg-indigo-900/60 text-white text-xs p-3 rounded-2xl rounded-tr-none ml-6 border border-indigo-500/30">
+                            ¿Cómo le fue a Andrés hoy y qué debe mejorar?
+                        </div>
+
+                        <!-- Respuesta IA -->
+                        <div class="bg-white/5 text-slate-200 text-xs p-3.5 rounded-2xl rounded-tl-none mr-4 border border-white/10 space-y-1.5 leading-relaxed">
+                            <div><strong>Andrés Morales (Célula F3):</strong> Registró un TMO promedio de <span class="text-rose-400 font-bold">25.45s</span> (+27.3% sobre la meta).</div>
+                            <div class="text-[11px] text-slate-300">• Causa: Demoras en soporte técnico y Wrap-up de 3.15s.</div>
+                            <div class="text-[11px] text-emerald-300">• Plan: Escalamiento temprano antes de 15s y uso de macros en CRM.</div>
+                            <div class="pt-1">
+                                <span class="inline-flex items-center px-2 py-1 bg-purple-600/80 rounded-lg text-[10px] font-bold text-white">
+                                    <i class="fa-solid fa-paper-plane mr-1 text-[9px]"></i> Alerta despachada a andrxscxx@gmail.com
+                                </span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 space-y-3">
-                        <h3 class="font-bold text-white text-sm flex items-center">
-                            <i class="fa-solid fa-shield-halved text-emerald-400 mr-2"></i> Reglas y Contexto Blindado
-                        </h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            La IA extrae las métricas reales en memoria para dar respuestas matemáticamente exactas, sugiere planes de coaching por asesor y mantiene el foco 100% en la operación BPO.
-                        </p>
-                        <div class="p-2.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-semibold">
-                            <i class="fa-solid fa-bolt mr-1"></i> Botón de acción directa integrado en las respuestas de la IA
+                    <!-- Capacidades Clave -->
+                    <div class="space-y-3 my-auto">
+                        <div class="p-4 rounded-xl glass-subcard space-y-1 border-l-4 border-l-purple-500">
+                            <h4 class="font-bold text-white text-xs">Consultas Libres en Español</h4>
+                            <p class="text-xs text-slate-300">
+                                Reconoce preguntas por nombre de agente (*Andrés, Laura, Felipe*), canales (*Soporte, WhatsApp*) o desempeño global.
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-xl glass-subcard space-y-1 border-l-4 border-l-emerald-500">
+                            <h4 class="font-bold text-white text-xs">Cálculo Matemático Dinámico</h4>
+                            <p class="text-xs text-slate-300">
+                                La IA calcula las estadísticas directamente de la memoria activa de 85 registros, garantizando precisión absoluta.
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-xl glass-subcard space-y-1 border-l-4 border-l-blue-500">
+                            <h4 class="font-bold text-white text-xs">Guardrails de Negocio</h4>
+                            <p class="text-xs text-slate-300">
+                                Si el usuario realiza consultas ajenas a la operación, la IA redirige amablemente hacia los objetivos del centro de contacto.
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-4 border-t border-purple-800/60 flex justify-between items-center text-xs text-purple-200">
-                    <span>Flujo 2 n8n: Clasificación estricta (Aprobado &le; 20s | Revisión > 20s)</span>
-                    <span class="text-purple-300 font-semibold"><i class="fa-solid fa-sparkles mr-1"></i> IA Táctica para Supervisores</span>
+                <div class="pt-4 border-t border-white/10 flex justify-between items-center text-xs text-slate-400">
+                    <span>Integración con LangChain / OpenAI en Flujo 2 de n8n</span>
+                    <span class="text-purple-300 font-semibold"><i class="fa-solid fa-sparkles mr-1"></i> Asistencia Táctica en Tiempo Real</span>
                 </div>
             </div>
 
             <!-- =========================================================================
                  DIAPOSITIVA 7: MÓDULO DE ALERTAS A TRABAJADORES
                  ========================================================================= -->
-            <div class="slide-container w-full flex-col justify-between p-8 md:p-14 bg-gradient-to-br from-slate-900 to-slate-950 rounded-3xl border border-slate-800 shadow-2xl">
+            <div class="slide-wrapper w-full flex-col justify-between p-8 md:p-14 rounded-3xl glass-deck">
                 <div>
                     <div class="flex items-center space-x-2 text-rose-400 text-xs font-bold uppercase tracking-wider mb-2">
-                        <i class="fa-solid fa-envelope-open-text"></i>
-                        <span>Cierre de Brechas Operativas</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Acción Proactiva</span>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-white">Módulo de Alertas Individuales a Trabajadores</h2>
-                    <p class="text-xs text-slate-400 mt-1">Retroalimentación inmediata y constructiva con planes de mejora personalizados</p>
+                    <h2 class="text-3xl md:text-5xl font-black text-white font-heading">Alertas Individuales & Coaching al Asesor</h2>
+                    <p class="text-xs md:text-sm text-slate-400 mt-1">Retroalimentación inmediata y constructiva con despacho automatizado por correo</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5 my-auto">
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-rose-500/30 space-y-2 md:col-span-2">
-                        <div class="flex justify-between items-center">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300">CASO REAL VALIDADO</span>
-                            <span class="font-mono text-xs text-slate-400">andrxscxx@gmail.com</span>
+                    <!-- Tarjeta del Correo de Andrés -->
+                    <div class="md:col-span-2 p-5 rounded-2xl bg-slate-950 border border-rose-500/40 space-y-3">
+                        <div class="flex justify-between items-center pb-2 border-b border-white/10">
+                            <div>
+                                <span class="font-bold text-white text-xs block">NOTIFICACIÓN REAL ENTREGADA</span>
+                                <span class="font-mono text-[11px] text-rose-400">Para: andrxscxx@gmail.com (Andrés Morales)</span>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                <i class="fa-solid fa-check mr-1"></i> SMTP Exitoso
+                            </span>
                         </div>
-                        <h3 class="font-bold text-white text-base">Alerta & Plan de Coaching para Andrés Morales</h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            El sistema detecta automáticamente que Andrés registró <strong>25.45s (+27.3% sobre la meta de 20s)</strong> con demoras en el canal de Soporte Técnico y Wrap-up prolongado (3.15s).
-                        </p>
-                        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 space-y-1">
-                            <div>• <strong>Acción 1:</strong> Escalar casos complejos antes de 15s a nivel 2.</div>
-                            <div>• <strong>Acción 2:</strong> Usar plantillas rápidas en CRM para reducir el Wrap-up a &lt; 2s.</div>
-                            <div>• <strong>Acción 3:</strong> Shadowing con Laura Restrepo (mejor TMO del equipo: 12.64s).</div>
+
+                        <div class="text-xs space-y-2 text-slate-300">
+                            <p><strong>Asunto:</strong> [ALERTA DE DESEMPEÑO TMO] Reporte Individual de Gestión y Plan de Mejora</p>
+                            <div class="p-3 rounded-xl bg-slate-900 border border-white/5 space-y-1 font-mono text-[11px]">
+                                <div class="flex justify-between"><span>TMO Registrado:</span><span class="text-rose-400 font-bold">25.45s (+27.3% sobre meta)</span></div>
+                                <div class="flex justify-between"><span>Talk Time:</span><span>17.20s</span></div>
+                                <div class="flex justify-between"><span>Hold Time:</span><span>5.10s</span></div>
+                                <div class="flex justify-between"><span>Wrap-up:</span><span>3.15s</span></div>
+                            </div>
+                            <div class="p-2.5 rounded-lg bg-rose-950/40 border border-rose-900/50 text-[11px] text-rose-200">
+                                <strong>Plan de Mejora IA:</strong> Escalamiento a 2do nivel antes de 15s en llamadas complejas y shadowing con Laura Restrepo (12.64s).
+                            </div>
+                        </div>
+
+                        <div class="pt-1 flex items-center text-[11px] text-slate-400 font-mono">
+                            <i class="fa-solid fa-paperclip text-blue-400 mr-1.5"></i> Adjunto: reporte_consolidado_tmo.xlsx (Libro 4 hojas con gráficos)
                         </div>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3 flex flex-col justify-between">
-                        <div>
-                            <div class="text-emerald-400 text-base font-bold mb-1"><i class="fa-solid fa-paperclip mr-1.5"></i> Adjuntos Reales</div>
-                            <p class="text-xs text-slate-400 leading-relaxed">
-                                Cada alerta despachada incluye el libro oficial <strong>reporte_consolidado_tmo.xlsx</strong> con el detalle completo de las gestiones.
-                            </p>
+                    <!-- Panel de Asesores Críticos Detectados -->
+                    <div class="space-y-3">
+                        <div class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                            Asesores en Revisión (&gt; 20s):
                         </div>
-                        <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 font-semibold text-center">
-                            <i class="fa-solid fa-circle-check mr-1"></i> Despacho SMTP Verificado
+
+                        <div class="p-3 rounded-xl glass-subcard border-l-4 border-l-rose-500">
+                            <div class="font-bold text-white text-xs">Felipe Herrera</div>
+                            <div class="font-mono text-rose-400 text-xs font-bold">30.00s (+50%)</div>
+                            <div class="text-[10px] text-slate-400">Wrap-up crítico: 3.7s</div>
+                        </div>
+
+                        <div class="p-3 rounded-xl glass-subcard border-l-4 border-l-rose-500">
+                            <div class="font-bold text-white text-xs">Andrés Morales</div>
+                            <div class="font-mono text-rose-400 text-xs font-bold">25.45s (+27.3%)</div>
+                            <div class="text-[10px] text-slate-400">Soporte Técnico demorado</div>
+                        </div>
+
+                        <div class="p-3 rounded-xl glass-subcard border-l-4 border-l-rose-500">
+                            <div class="font-bold text-white text-xs">Mateo Cárdenas</div>
+                            <div class="font-mono text-rose-400 text-xs font-bold">24.50s (+22.5%)</div>
+                            <div class="text-[10px] text-slate-400">Hold time elevado</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-4 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400">
-                    <span>Enrutamiento condicional: Alerta roja para revisión / Alerta verde para aprobados</span>
-                    <span class="text-rose-400 font-semibold"><i class="fa-solid fa-bell mr-1"></i> Notificación en Tiempo Real</span>
+                <div class="pt-4 border-t border-white/10 flex justify-between items-center text-xs text-slate-400">
+                    <span>Enrutamiento condicional: Alerta roja individual con coaching para los 3 asesores</span>
+                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Despacho en 1 Clic</span>
                 </div>
             </div>
 
             <!-- =========================================================================
-                 DIAPOSITIVA 8: RESULTADOS DE LA MEDICIÓN
+                 DIAPOSITIVA 8: RESULTADOS DE LA AUDITORÍA OPERATIVA
                  ========================================================================= -->
-            <div class="slide-container w-full flex-col justify-between p-8 md:p-14 bg-gradient-to-br from-slate-900 to-slate-950 rounded-3xl border border-slate-800 shadow-2xl">
+            <div class="slide-wrapper w-full flex-col justify-between p-8 md:p-14 rounded-3xl glass-deck">
                 <div>
                     <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
-                        <i class="fa-solid fa-square-poll-vertical"></i>
-                        <span>Datos de la Prueba de Concepto</span>
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span>Evidencia Empírica</span>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-white">Resultados de la Auditoría Operativa</h2>
-                    <p class="text-xs text-slate-400 mt-1">Dataset real de 85 operaciones auditadas en 9 asesores</p>
+                    <h2 class="text-3xl md:text-5xl font-black text-white font-heading">Resultados de la Auditoría Operativa</h2>
+                    <p class="text-xs md:text-sm text-slate-400 mt-1">Medición sobre el dataset real de 85 operaciones y 9 asesores</p>
                 </div>
 
+                <!-- 4 Tarjetas de Estadísticas Clave -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 my-auto">
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 text-center space-y-1">
-                        <span class="text-[10px] uppercase font-bold text-slate-400">TMO GLOBAL</span>
-                        <div class="font-mono text-3xl font-black text-emerald-400">19.55s</div>
-                        <span class="text-[10px] text-emerald-500 font-semibold">&le; Meta de 20s (Cumplido)</span>
+                    <div class="p-6 rounded-2xl glass-subcard text-center space-y-1 border-b-4 border-b-emerald-500">
+                        <span class="text-[10px] uppercase font-bold text-slate-400">TMO PROMEDIO GLOBAL</span>
+                        <div class="font-mono text-4xl font-black text-emerald-400">19.55s</div>
+                        <span class="text-[11px] text-emerald-300 font-semibold block">&le; Meta de 20s (OK)</span>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 text-center space-y-1">
-                        <span class="text-[10px] uppercase font-bold text-slate-400">CUMPLIMIENTO</span>
-                        <div class="font-mono text-3xl font-black text-blue-400">62.5%</div>
-                        <span class="text-[10px] text-slate-400">5 de 8 asesores en meta</span>
+                    <div class="p-6 rounded-2xl glass-subcard text-center space-y-1 border-b-4 border-b-blue-500">
+                        <span class="text-[10px] uppercase font-bold text-slate-400">TASA CUMPLIMIENTO</span>
+                        <div class="font-mono text-4xl font-black text-blue-400">62.5%</div>
+                        <span class="text-[11px] text-slate-300 font-semibold block">5 de 8 asesores OK</span>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 text-center space-y-1">
+                    <div class="p-6 rounded-2xl glass-subcard text-center space-y-1 border-b-4 border-b-purple-500">
                         <span class="text-[10px] uppercase font-bold text-slate-400">MEJOR ASESOR</span>
-                        <div class="font-mono text-xl font-bold text-white truncate">Laura Restrepo</div>
-                        <span class="text-[10px] text-emerald-400 font-semibold font-mono">12.64s TMO</span>
+                        <div class="font-bold text-white text-base truncate">Laura Restrepo</div>
+                        <span class="font-mono text-xs text-purple-300 font-bold block">12.64s TMO (-37%)</span>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 text-center space-y-1">
+                    <div class="p-6 rounded-2xl glass-subcard text-center space-y-1 border-b-4 border-b-rose-500">
                         <span class="text-[10px] uppercase font-bold text-slate-400">CANAL MÁS CRÍTICO</span>
-                        <div class="font-mono text-xl font-bold text-rose-400 truncate">Soporte Técnico</div>
-                        <span class="text-[10px] text-rose-400 font-semibold font-mono">26.5s TMO</span>
+                        <div class="font-bold text-rose-400 text-base truncate">Soporte Técnico</div>
+                        <span class="font-mono text-xs text-rose-300 font-bold block">26.5s TMO (+32.5%)</span>
+                    </div>
+                </div>
+
+                <!-- Desglose por Células de Trabajo -->
+                <div class="grid grid-cols-3 gap-3 text-xs font-sans">
+                    <div class="p-3 rounded-xl bg-blue-950/40 border border-blue-500/30">
+                        <strong class="text-blue-300 block">Célula F1 (Facturación):</strong>
+                        <span class="text-slate-300">TMO Promedio 14.8s • 100% en meta.</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30">
+                        <strong class="text-indigo-300 block">Célula F2 (Ventas):</strong>
+                        <span class="text-slate-300">TMO Promedio 17.4s • 100% en meta.</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-rose-950/40 border border-rose-500/30">
+                        <strong class="text-rose-300 block">Célula F3 (Soporte):</strong>
+                        <span class="text-slate-300">TMO Promedio 26.6s • Requiere coaching.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =========================================================================
+                 DIAPOSITIVA 9: IMPACTO EN EL NEGOCIO Y ROI
+                 ========================================================================= -->
+            <div class="slide-wrapper w-full flex-col justify-between p-8 md:p-14 rounded-3xl glass-deck">
+                <div>
+                    <div class="flex items-center space-x-2 text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Valor Económico & Operativo</span>
+                    </div>
+                    <h2 class="text-3xl md:text-5xl font-black text-white font-heading">Impacto en el Negocio & Retorno de Inversión</h2>
+                    <p class="text-xs md:text-sm text-slate-400 mt-1">Beneficios cuantificables frente al esquema manual anterior</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 my-auto">
+                    <!-- Métrica 1 -->
+                    <div class="p-6 rounded-2xl glass-subcard space-y-3">
+                        <div class="text-gradient-emerald font-mono text-5xl font-black">-96%</div>
+                        <h3 class="font-bold text-white text-base">Ahorro de Tiempo por Turno</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            De 45-90 minutos manuales de analista a menos de <strong>3.2 segundos automatizados</strong> por ejecución en n8n.
+                        </p>
+                    </div>
+
+                    <!-- Métrica 2 -->
+                    <div class="p-6 rounded-2xl glass-subcard space-y-3">
+                        <div class="text-gradient-blue font-mono text-5xl font-black">100%</div>
+                        <h3 class="font-bold text-white text-base">Calidad & Cero Duplicados</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Eliminación total de errores humanos de tipeo y control de hashes SHA-256 en base de datos PostgreSQL.
+                        </p>
+                    </div>
+
+                    <!-- Métrica 3 -->
+                    <div class="p-6 rounded-2xl glass-subcard space-y-3">
+                        <div class="text-gradient-rose font-mono text-5xl font-black">24/7</div>
+                        <h3 class="font-bold text-white text-base">Protección Contractual de SLA</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Intervención proactiva en el mismo turno para evitar penalizaciones económicas en los contratos de atención al cliente.
+                        </p>
                     </div>
                 </div>
 
                 <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center text-xs">
-                    <span class="text-slate-300">Células evaluadas: F1 (Facturación - 14.8s OK) • F2 (Ventas - 17.4s OK) • F3 (Soporte - 26.6s Revisión)</span>
-                    <span class="text-blue-400 font-bold">Total: 85 Registros</span>
+                    <span class="text-slate-300">Capacidad: Escalable a múltiples campañas, células y clientes simultáneos</span>
+                    <span class="text-emerald-400 font-bold font-mono">Alta Rentabilidad BPO</span>
                 </div>
             </div>
 
             <!-- =========================================================================
-                 DIAPOSITIVA 9: IMPACTO Y ROI
+                 DIAPOSITIVA 10: CONCLUSIÓN Y DEMOSTRACIÓN EN VIVO
                  ========================================================================= -->
-            <div class="slide-container w-full flex-col justify-between p-8 md:p-14 bg-gradient-to-br from-slate-900 to-slate-950 rounded-3xl border border-slate-800 shadow-2xl">
+            <div class="slide-wrapper w-full flex-col justify-between p-8 md:p-14 rounded-3xl glass-deck relative overflow-hidden">
                 <div>
                     <div class="flex items-center space-x-2 text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">
-                        <i class="fa-solid fa-chart-line-up"></i>
-                        <span>Retorno de Inversión</span>
-                    </div>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-white">Impacto en el Negocio & Beneficios</h2>
-                    <p class="text-xs text-slate-400 mt-1">De un proceso manual fragmentado a una solución empresarial automatizada</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 my-auto">
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/20 space-y-2">
-                        <div class="font-mono text-3xl font-black text-emerald-400">-96%</div>
-                        <h3 class="font-bold text-white text-sm">Ahorro de Tiempo</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            De 45-90 minutos manuales por turno a menos de 3.2 segundos automatizados por ejecución en n8n.
-                        </p>
-                    </div>
-
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-blue-500/20 space-y-2">
-                        <div class="font-mono text-3xl font-black text-blue-400">100%</div>
-                        <h3 class="font-bold text-white text-sm">Control de Calidad</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Cero duplicados gracias a SHA-256 en Supabase y fórmulas matemáticas blindadas sin intervención humana.
-                        </p>
-                    </div>
-
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-purple-500/20 space-y-2">
-                        <div class="font-mono text-3xl font-black text-purple-400">24/7</div>
-                        <h3 class="font-bold text-white text-sm">Coaching Activo</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Detección inmediata de asesores que requieren nivelación antes de que se afecten los SLA del cliente.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400">
-                    <span>Escalabilidad: Soporta múltiples centros de contacto y campañas simultáneas</span>
-                    <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-shield-check mr-1"></i> Alta Disponibilidad</span>
-                </div>
-            </div>
-
-            <!-- =========================================================================
-                 DIAPOSITIVA 10: CONCLUSIÓN Y DEMO
-                 ========================================================================= -->
-            <div class="slide-container w-full flex-col justify-between p-8 md:p-14 bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 rounded-3xl border border-indigo-500/40 shadow-2xl relative overflow-hidden">
-                <div>
-                    <div class="flex items-center space-x-2 text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">
-                        <i class="fa-solid fa-flag-checkered"></i>
+                        <i class="fa-solid fa-circle-check"></i>
                         <span>Cierre de la Exposición</span>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-white">Conclusiones & Demostración en Vivo</h2>
-                    <p class="text-xs text-slate-400 mt-1">Una solución robusta, desplegada y lista para producción</p>
+                    <h2 class="text-3xl md:text-5xl font-black text-white font-heading">Conclusiones & Demostración en Vivo</h2>
+                    <p class="text-xs md:text-sm text-slate-400 mt-1">Una solución robusta, auditada y desplegada en producción</p>
                 </div>
 
+                <!-- Enlaces y Accesos Directos -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 my-auto">
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2.5">
-                        <h3 class="font-bold text-white text-sm flex items-center">
-                            <i class="fa-brands fa-github text-white mr-2 text-base"></i> Repositorio Oficial en GitHub
-                        </h3>
-                        <p class="text-xs text-slate-400">
-                            Código fuente completo con flujos n8n, esquema DDL de Supabase y suite web SPA disponible en:
-                        </p>
-                        <a href="https://github.com/andres549/Proyecto_tmo" target="_blank" class="text-xs font-mono font-bold text-blue-400 hover:underline block break-all">
-                            github.com/andres549/Proyecto_tmo
+                    <div class="p-6 rounded-2xl glass-subcard space-y-3 border border-blue-500/30">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-brands fa-github text-2xl text-white"></i>
+                            <div>
+                                <h3 class="font-bold text-white text-sm">Repositorio GitHub Publicado</h3>
+                                <p class="text-xs text-slate-400">Código fuente, workflows n8n y esquema SQL</p>
+                            </div>
+                        </div>
+                        <a href="https://github.com/andres549/Proyecto_tmo" target="_blank" class="block p-3 rounded-xl bg-black/40 border border-white/10 font-mono text-xs text-blue-400 font-bold hover:underline break-all">
+                            https://github.com/andres549/Proyecto_tmo
                         </a>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2.5">
-                        <h3 class="font-bold text-white text-sm flex items-center">
-                            <i class="fa-solid fa-server text-emerald-400 mr-2 text-base"></i> Entorno Local Activo
-                        </h3>
-                        <p class="text-xs text-slate-400">
-                            El portal se encuentra en ejecución en Node.js, listo para probar el cronómetro y la IA:
-                        </p>
-                        <a href="http://localhost:3333" target="_blank" class="text-xs font-mono font-bold text-emerald-400 hover:underline block">
+                    <div class="p-6 rounded-2xl glass-subcard space-y-3 border border-emerald-500/30">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-server text-2xl text-emerald-400"></i>
+                            <div>
+                                <h3 class="font-bold text-white text-sm">Servidor Web en Ejecución</h3>
+                                <p class="text-xs text-slate-400">Portal SPA interactivo listo para operar</p>
+                            </div>
+                        </div>
+                        <a href="http://localhost:3333" target="_blank" class="block p-3 rounded-xl bg-black/40 border border-white/10 font-mono text-xs text-emerald-400 font-bold hover:underline">
                             http://localhost:3333
                         </a>
                     </div>
                 </div>
 
-                <div class="pt-6 border-t border-slate-800/80 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 text-xs">
-                    <span class="text-slate-300 font-semibold">¡Muchas gracias por su atención! Quedo abierto a preguntas y demostración.</span>
-                    <a href="/" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition flex items-center space-x-2">
-                        <i class="fa-solid fa-play"></i>
-                        <span>Iniciar Demo en Vivo</span>
+                <!-- Footer de agradecimiento -->
+                <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs">
+                    <div class="text-slate-300 font-semibold text-sm">
+                        ¡Muchas gracias por su atención! Quedo abierto a preguntas del comité.
+                    </div>
+                    <a href="/" class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold transition flex items-center space-x-2 shadow-lg shadow-blue-500/25">
+                        <i class="fa-solid fa-play text-xs"></i>
+                        <span>Abrir Demo en Vivo</span>
                     </a>
                 </div>
             </div>
@@ -576,36 +832,40 @@
         </div>
     </main>
 
-    <!-- BARRA INFERIOR DE NAVEGACIÓN -->
-    <footer class="no-print h-16 border-t border-slate-800/80 px-6 flex items-center justify-between bg-slate-900/70 backdrop-blur-md sticky bottom-0 z-30">
-        <!-- Barra de Progreso de Diapositivas -->
-        <div class="w-48 bg-slate-800 h-1.5 rounded-full overflow-hidden hidden sm:block">
-            <div id="slideProgressBar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full transition-all duration-300" style="width: 10%;"></div>
+    <!-- 3. BARRA INFERIOR DE NAVEGACIÓN Y PROGRESO -->
+    <footer class="no-print h-16 border-t border-white/10 px-6 flex items-center justify-between bg-slate-950/70 backdrop-blur-xl sticky bottom-0 z-40">
+        <!-- Barra de Progreso Gradiente -->
+        <div class="w-56 bg-white/5 h-2 rounded-full overflow-hidden hidden sm:block border border-white/10">
+            <div id="slideProgressBar" class="bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-400 h-full rounded-full transition-all duration-300" style="width: 10%;"></div>
         </div>
 
         <!-- Controles Anterior / Siguiente -->
         <div class="flex items-center space-x-3 mx-auto sm:mx-0">
-            <button type="button" id="btnPrevSlide" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center space-x-2 transition disabled:opacity-30 disabled:cursor-not-allowed">
+            <button type="button" id="btnPrevSlide" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-semibold text-xs flex items-center space-x-2 transition disabled:opacity-30 disabled:cursor-not-allowed">
                 <i class="fa-solid fa-chevron-left text-[10px]"></i>
                 <span>Anterior</span>
             </button>
 
-            <button type="button" id="btnNextSlide" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center space-x-2 shadow-md shadow-blue-600/30 transition disabled:opacity-30 disabled:cursor-not-allowed">
+            <button type="button" id="btnNextSlide" class="px-6 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center space-x-2 shadow-lg shadow-blue-500/25 transition disabled:opacity-30 disabled:cursor-not-allowed">
                 <span>Siguiente</span>
                 <i class="fa-solid fa-chevron-right text-[10px]"></i>
             </button>
         </div>
 
-        <div class="text-[11px] text-slate-500 hidden md:block">
-            Usa las flechas <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 font-mono text-slate-300">&larr;</kbd> <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 font-mono text-slate-300">&rarr;</kbd> o <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 font-mono text-slate-300">Espacio</kbd>
+        <div class="text-[11px] text-slate-500 hidden md:flex items-center space-x-2">
+            <span>Navega con</span>
+            <kbd class="px-1.5 py-0.5 bg-white/5 rounded border border-white/10 font-mono text-slate-300">&larr;</kbd>
+            <kbd class="px-1.5 py-0.5 bg-white/5 rounded border border-white/10 font-mono text-slate-300">&rarr;</kbd>
+            <kbd class="px-1.5 py-0.5 bg-white/5 rounded border border-white/10 font-mono text-slate-300">Espacio</kbd>
         </div>
     </footer>
 
-    <!-- LÓGICA DE CONTROL DE DIAPOSITIVAS -->
+    <!-- 4. LÓGICA DE CONTROL, EFECTOS DE AUDIO Y THUMBNAILS -->
     <script>
-        const slides = document.querySelectorAll('.slide-container');
+        const slides = document.querySelectorAll('.slide-wrapper');
         const totalSlides = slides.length;
         let currentSlideIdx = 0;
+        let isAudioEnabled = true;
 
         const counterCurrent = document.getElementById('slideCounterCurrent');
         const counterTotal = document.getElementById('slideCounterTotal');
@@ -613,8 +873,55 @@
         const btnPrev = document.getElementById('btnPrevSlide');
         const btnNext = document.getElementById('btnNextSlide');
         const btnFullscreen = document.getElementById('btnFullscreen');
+        const btnToggleAudio = document.getElementById('btnToggleAudio');
+        const audioIcon = document.getElementById('audioIcon');
+        const thumbDotsContainer = document.getElementById('thumbDotsContainer');
 
         if (counterTotal) counterTotal.textContent = totalSlides;
+
+        // Generar mini botones indicadores para saltar a cualquier diapositiva
+        if (thumbDotsContainer) {
+            slides.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = `w-5 h-5 rounded-lg text-[10px] font-mono font-bold flex items-center justify-center transition-all ${idx === 0 ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-white/10'}`;
+                dot.textContent = idx + 1;
+                dot.addEventListener('click', () => {
+                    currentSlideIdx = idx;
+                    playSfx('slide');
+                    updateSlideUI();
+                });
+                thumbDotsContainer.appendChild(dot);
+            });
+        }
+
+        // Sintetizador de audio Web Audio API para cambio de diapositivas
+        let audioCtx = null;
+        function playSfx(type) {
+            if (!isAudioEnabled) return;
+            try {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (!audioCtx && AudioContextClass) audioCtx = new AudioContextClass();
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                if (!audioCtx) return;
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
+
+                if (type === 'slide') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(850, now + 0.06);
+                    gain.gain.setValueAtTime(0.06, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.06);
+                    osc.start(now);
+                    osc.stop(now + 0.06);
+                }
+            } catch (_) {}
+        }
 
         function updateSlideUI() {
             slides.forEach((s, idx) => {
@@ -626,15 +933,27 @@
             });
 
             if (counterCurrent) counterCurrent.textContent = currentSlideIdx + 1;
+
             if (progressBar) {
                 const pct = Math.round(((currentSlideIdx + 1) / totalSlides) * 100);
                 progressBar.style.width = `${pct}%`;
             }
 
+            if (thumbDotsContainer) {
+                const dots = thumbDotsContainer.querySelectorAll('button');
+                dots.forEach((d, idx) => {
+                    if (idx === currentSlideIdx) {
+                        d.className = 'w-5 h-5 rounded-lg text-[10px] font-mono font-bold flex items-center justify-center transition-all bg-blue-600 text-white shadow-sm';
+                    } else {
+                        d.className = 'w-5 h-5 rounded-lg text-[10px] font-mono font-bold flex items-center justify-center transition-all text-slate-400 hover:text-white hover:bg-white/10';
+                    }
+                });
+            }
+
             if (btnPrev) btnPrev.disabled = currentSlideIdx === 0;
             if (btnNext) {
                 if (currentSlideIdx === totalSlides - 1) {
-                    btnNext.innerHTML = `<span>Finalizar</span> <i class="fa-solid fa-check text-[10px]"></i>`;
+                    btnNext.innerHTML = `<span>Finalizar</span> <i class="fa-solid fa-flag-checkered text-[10px]"></i>`;
                 } else {
                     btnNext.innerHTML = `<span>Siguiente</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>`;
                 }
@@ -644,6 +963,7 @@
         function nextSlide() {
             if (currentSlideIdx < totalSlides - 1) {
                 currentSlideIdx++;
+                playSfx('slide');
                 updateSlideUI();
             }
         }
@@ -651,6 +971,7 @@
         function prevSlide() {
             if (currentSlideIdx > 0) {
                 currentSlideIdx--;
+                playSfx('slide');
                 updateSlideUI();
             }
         }
@@ -671,6 +992,19 @@
             }
         });
 
+        // Toggle Sonido
+        if (btnToggleAudio) {
+            btnToggleAudio.addEventListener('click', () => {
+                isAudioEnabled = !isAudioEnabled;
+                if (isAudioEnabled) {
+                    audioIcon.className = 'fa-solid fa-volume-high';
+                    playSfx('slide');
+                } else {
+                    audioIcon.className = 'fa-solid fa-volume-xmark text-slate-500';
+                }
+            });
+        }
+
         // Pantalla completa
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
@@ -681,7 +1015,7 @@
         }
         if (btnFullscreen) btnFullscreen.addEventListener('click', toggleFullscreen);
 
-        // Iniciar
+        // Inicializar
         updateSlideUI();
     </script>
 </body>
